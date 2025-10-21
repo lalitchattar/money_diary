@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:money_diary/app/module/label/controller/label_controller.dart';
 
 import '../../general/view/general_settings_screen.dart';
 import '../../label/view/label_list_screen.dart';
@@ -98,7 +99,11 @@ class MoreScreen extends StatelessWidget {
                 icon: Icons.label,
                 title: 'Labels',
                 subtitle: 'Tag and group transactions easily',
-                onTap: () => Get.to(LabelListScreen())
+                onTap: () => {
+                  Get.to(() => LabelListScreen(), binding: BindingsBuilder((){
+                    Get.lazyPut(() => LabelController(), fenix: true);
+                  }))
+                }
             ),
             _buildSettingItem(context,
                 icon: Icons.swap_horiz,
