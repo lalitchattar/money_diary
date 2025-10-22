@@ -35,9 +35,11 @@ class MerchantController extends GetxController {
     merchants.add(merchant);
   }
 
-  Future<void> updateLabel({int? id, List<String>? fieldsToUpdate}) async {
+  Future<void> updateMerchant({int? id, List<String>? fieldsToUpdate}) async {
 
-    final merchant = Merchant( id: id, name: name.value, type: type.value, icon: selectedImage.value!.path );
+    String imagePath = selectedImage.value?.path ?? 'assets/images/default_merchant.png';
+
+    final merchant = Merchant( id: id, name: name.value, type: type.value, icon: imagePath );
     // Update in database
     await merchantService.updateMerchant(merchant, fieldsToUpdate);
 

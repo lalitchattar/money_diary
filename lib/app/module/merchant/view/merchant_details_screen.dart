@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:money_diary/app/data/model/label_model.dart';
+import 'package:money_diary/app/data/model/merchant_model.dart';
 import 'package:money_diary/app/module/label/view/edit_label_screen.dart';
 import 'package:money_diary/app/module/merchant/controller/merchant_controller.dart';
+import 'package:money_diary/app/module/merchant/view/edit_merchant_screen.dart';
 
 
-class LabelDetailsScreen extends GetView<MerchantController> {
+class MerchantDetailsScreen extends GetView<MerchantController> {
 
-  final Label label = Get.arguments;
+  final Merchant merchant = Get.arguments;
 
-  LabelDetailsScreen({super.key});
+  MerchantDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    print(label.name);
     return Scaffold(
-      appBar: AppBar(title: const Text("Labels"), centerTitle: true, actions: [
+      appBar: AppBar(title: const Text("Merchant Details"), centerTitle: true, actions: [
         IconButton(onPressed: (){
-          Get.to(() => EditLabelScreen(), arguments: label);
+          Get.to(() => EditMerchantScreen(), arguments: merchant);
         }, icon: Icon(Icons.edit)),
         IconButton(onPressed: (){}, icon: Icon(Icons.delete)),
       ]),

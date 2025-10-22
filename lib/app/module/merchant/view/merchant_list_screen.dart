@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:money_diary/app/module/merchant/controller/merchant_controller.dart';
 import 'package:money_diary/app/module/merchant/view/add_merchant_screen.dart';
 
+import 'merchant_details_screen.dart';
+
 
 class MerchantListScreen extends GetView<MerchantController> {
   const MerchantListScreen({super.key});
@@ -127,6 +129,7 @@ class MerchantListScreen extends GetView<MerchantController> {
             highlightColor: colorScheme.primary.withOpacity(0.04),
             onTap: () {
               controller.reset();
+              Get.to(() => MerchantDetailsScreen(), arguments: merchant);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),

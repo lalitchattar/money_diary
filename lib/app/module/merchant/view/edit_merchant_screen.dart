@@ -1,26 +1,41 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:money_diary/app/module/label/controller/label_controller.dart';
-import 'package:money_diary/app/utils/utility.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:money_diary/app/data/model/merchant_model.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import '../../../custom/widget/validation_message_screen.dart';
-import '../../../data/model/label_model.dart';
+import '../controller/merchant_controller.dart';
 
-class EditLabelScreen extends GetView<LabelController> {
+class EditMerchantScreen extends GetView<MerchantController> {
 
-  final Label label = Get.arguments;
-  final TextEditingController labelNameController = TextEditingController();
+  final Merchant merchant = Get.arguments;
+  final TextEditingController merchantNameController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
 
-  EditLabelScreen({super.key});
+  EditMerchantScreen({super.key});
 
-  _initializeController() {
-    controller.name.value = label.name;
-    controller.selectedColor.value = label.color;
+  void _initializeController() {
+    controller.name.value = merchant.name;
+    controller.type.value = merchant.type;
+
+    if (merchant.icon != null && merchant.icon!.startsWith('/data')) {
+      // Local file from gallery/camera
+      controller.selectedImage.value = File(merchant.icon!);
+    } else {
+      // Asset image or null → let UI show default
+      controller.selectedImage.value = null;
+    }
+
+    // Pre-fill text controller
+    merchantNameController.text = merchant.name;
   }
 
-  Future<void> _pickColor(
+  /// 📷 Pick image from camera or gallery and store it in app directory
+  Future<void> _pickImage(
       BuildContext context, TextTheme textTheme, ColorScheme colorScheme) async {
-    final selected = await showModalBottomSheet<Color>(
+    final choice = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       backgroundColor: colorScheme.surface,
@@ -43,12 +58,11 @@ class EditLabelScreen extends GetView<LabelController> {
               ),
               const SizedBox(height: 12),
               Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Row(
                   children: [
                     Text(
-                      'Choose a Color',
+                      'Choose an Image',
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -64,47 +78,20 @@ class EditLabelScreen extends GetView<LabelController> {
               const Divider(height: 8),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.colorOptions.length,
-                  gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                  ),
-                  itemBuilder: (context, index) {
-                    final color = controller.colorOptions[index];
-                    final isSelected = controller.selectedColor.value ==
-                        controller.colorToHex(color);
-                    return GestureDetector(
-                      onTap: () => Navigator.pop(context, color),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: color,
-                          border: Border.all(
-                            color: isSelected
-                                ? colorScheme.primary
-                                : Colors.transparent,
-                            width: isSelected ? 3 : 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: color.withOpacity(0.3),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            )
-                          ],
-                        ),
-                        child: isSelected
-                            ? const Icon(Icons.check, color: Colors.white)
-                            : null,
-                      ),
-                    );
-                  },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.photo_camera, color: colorScheme.primary),
+                      title: const Text('Take a Photo'),
+                      onTap: () => Navigator.pop(context, 'camera'),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.photo_library, color: colorScheme.primary),
+                      title: const Text('Choose from Gallery'),
+                      onTap: () => Navigator.pop(context, 'gallery'),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -113,82 +100,147 @@ class EditLabelScreen extends GetView<LabelController> {
       },
     );
 
-    if (selected != null) {
-      controller.selectedColor.value = controller.colorToHex(selected);
+    if (choice == null) return;
+
+    // Pick image
+    final pickedFile = await _picker.pickImage(
+      source: choice == 'camera' ? ImageSource.camera : ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (pickedFile != null) {
+      // Save to app directory
+      final appDir = await getApplicationDocumentsDirectory();
+      final fileName =
+          '${DateTime.now().millisecondsSinceEpoch}_${path.basename(pickedFile.path)}';
+      final savedImage = await File(pickedFile.path).copy('${appDir.path}/$fileName');
+
+      // Store locally in controller
+      controller.selectedImage.value = savedImage;
     }
+  }
+
+  /// 💾 Validate and save merchant
+  Future<void> _updateMerchant() async {
+    final name = merchantNameController.text.trim();
+    controller.name.value = name;
+    final errors = <String>[];
+
+    if (name.isEmpty) {
+      errors.add("Merchant name is required");
+    } else if (await controller.isNameExists(name, controller.type.value)) {
+      errors.add("Merchant name already exists");
+    }
+
+    if (errors.isNotEmpty) {
+      Get.bottomSheet(
+        ValidationMessageScreen(errorMessages: errors),
+        isScrollControlled: true,
+        backgroundColor: Theme.of(Get.context!).colorScheme.surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+      );
+      return;
+    }
+
+    await controller.updateMerchant(id: merchant.id, fieldsToUpdate: ['name', 'type', 'icon']);();
+    Get.until((route) => Get.currentRoute == "/MerchantListScreen");
   }
 
   @override
   Widget build(BuildContext context) {
-
-    print(label.name);
     _initializeController();
-
-
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Update Label"), centerTitle: true),
+      appBar: AppBar(title: const Text("Add Merchant"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // Centered color picker circle
             GestureDetector(
-              onTap: () => _pickColor(context, textTheme, colorScheme),
-              child: Obx(() => AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                width: 90,
-                height: 90,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: getColorFromHex(controller.selectedColor.value) ??
-                      colorScheme.surfaceVariant,
-                  border: Border.all(
-                    color: getColorFromHex(controller.selectedColor.value) ?? colorScheme.outlineVariant,
-                    width: 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: getColorFromHex(controller.selectedColor.value).withOpacity(0.4),
-                      blurRadius: 10,
-                      spreadRadius: 2,
+              onTap: () => _pickImage(context, textTheme, colorScheme),
+              child: Obx(() {
+                final file = controller.selectedImage.value;
+
+                return Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    ClipOval(
+                      child: file != null
+                          ? Image.file(
+                        file,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      )
+                          : Image.asset(
+                        'assets/images/default_merchant.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: colorScheme.surface, width: 2),
+                      ),
+                      padding: const EdgeInsets.all(6),
+                      child: const Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ],
-                ),
-                child: Icon(
-                  Icons.color_lens,
-                  size: 32,
-                  color: Colors.white,
-                ),
-              )),
+                );
+              }),
             ),
+
             const SizedBox(height: 24),
 
-            // Label name input
+            // 🔘 Segmented button for Expense / Income
+            Obx(() => SegmentedButton<String>(
+              segments: const [
+                ButtonSegment(
+                    value: 'Expense',
+                    icon: Icon(Icons.arrow_upward),
+                    label: Text('Expense')),
+                ButtonSegment(
+                    value: 'Income',
+                    icon: Icon(Icons.arrow_downward),
+                    label: Text('Income')),
+              ],
+              selected: {controller.type.value},
+              onSelectionChanged: (val) => controller.type.value = val.first,
+            )),
+            const SizedBox(height: 24),
+
+            // 🏷️ Merchant name field
             TextFormField(
-              controller: labelNameController..text = label.name,
+              controller: merchantNameController..text = merchant.name,
               textAlign: TextAlign.start,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
-                labelText: "Label Name",
+                labelText: "Merchant Name",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide:
-                  BorderSide(color: colorScheme.primary, width: 2),
+                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 14, horizontal: 16),
+                contentPadding:
+                const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
               ),
             ),
+            const SizedBox(height: 20),
 
-            const SizedBox(height: 16),
-
-            // Save button (moved just below label name)
+            // 💾 Save button
             SizedBox(
               width: double.infinity,
               child: FilledButton(
@@ -197,13 +249,10 @@ class EditLabelScreen extends GetView<LabelController> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  backgroundColor: colorScheme.primary,
                 ),
-                onPressed: () {
-                  _updateLabel();
-                },
+                onPressed: _updateMerchant,
                 child: Text(
-                  "Update Label",
+                  "Update Merchant",
                   style: textTheme.titleMedium?.copyWith(
                     color: colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
@@ -218,40 +267,4 @@ class EditLabelScreen extends GetView<LabelController> {
       ),
     );
   }
-
-  _updateLabel() async {
-    final labelName = labelNameController.text.trim();
-
-    // --- Validation messages ---
-    final errors = <String>[];
-
-    if (labelName.isEmpty) {
-      errors.add("Label name is required");
-    } else if (labelName != label.name && await controller.isNameExists(labelName)) {
-      errors.add("Label name already exists");
-    }
-
-    // --- Show validation messages if any ---
-    if (errors.isNotEmpty) {
-      Get.bottomSheet(
-        ValidationMessageScreen(errorMessages: errors),
-        isScrollControlled: true,
-        backgroundColor: Theme.of(Get.context!).colorScheme.surface,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-      );
-      return;
-    }
-
-    // --- Save the label if validation passes ---
-    controller.name.value = labelName;
-    await controller.updateLabel(id: label.id, fieldsToUpdate: ['name', 'color']);
-    Get.until((route) => Get.currentRoute == "/LabelListScreen");
-  }
-
-
-
-
-
 }
