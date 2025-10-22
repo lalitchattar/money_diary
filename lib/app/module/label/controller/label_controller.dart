@@ -35,23 +35,28 @@ class LabelController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<Label> createLabel() async {
-    return await labelService.createLabel(name.value.trim(), selectedColor.value);
+  Future<void> createLabel() async {
+    Label label = await labelService.createLabel(name.value.trim(), selectedColor.value);
+    labels.add(label);
   }
 
-  /*Future<void> updateLabel({int? id, List<String>? fieldsToUpdate}) async {
-    try{
-      final label = Label(
-          id: id,
-          name: name.value,
-          color: color.value
-      );
-      await repository.updateLabel(label, fieldsToUpdate: fieldsToUpdate);
-      await getAllLabels();
-    } catch (e, stack) {
-      appLogger.e('Error updating label id: $id', error: e, stackTrace: stack);
+  Future<void> updateLabel({int? id, List<String>? fieldsToUpdate}) async {
+
+    final label = Label( id: id, name: name.value, color: selectedColor.value );
+    // Update in database
+    await labelService.updateLabel(label, fieldsToUpdate);
+
+    // Find index of the existing label in the list
+    final index = labels.indexWhere((lbl) => lbl.id == label.id);
+    if (index != -1) {
+      // Update the label in memory (this auto-refreshes UI because it's an RxList)
+      labels[index] = label;
+    } else {
+      // (optional) if not found, just add it
+      labels.add(label);
     }
-  }*/
+  }
+
 
   Future<bool> isNameExists(String labelName) async {
     return await labelService.isNameExists(labelName.trim());

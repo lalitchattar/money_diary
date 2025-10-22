@@ -60,4 +60,13 @@ class LabelService {
     final label = await repo.getLabelByName(labelName.trim());
     return label != null;
   }
+
+  Future<void> updateLabel(Label label, List<String>? fieldsToUpdate) async {
+    try {
+      await repo.updateLabel(label, fieldsToUpdate: fieldsToUpdate);
+    } catch (e, stack) {
+      appLogger.e('Error updating label:', error: e, stackTrace: stack);
+      rethrow;
+    }
+  }
 }

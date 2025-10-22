@@ -6,11 +6,17 @@ import 'package:money_diary/app/utils/utility.dart';
 import '../../../custom/widget/validation_message_screen.dart';
 import '../../../data/model/label_model.dart';
 
-class AddLabelScreen extends GetView<LabelController> {
+class EditLabelScreen extends GetView<LabelController> {
 
+  final Label label = Get.arguments;
   final TextEditingController labelNameController = TextEditingController();
 
-  AddLabelScreen({super.key});
+  EditLabelScreen({super.key});
+
+  _initializeController() {
+    controller.name.value = label.name;
+    controller.selectedColor.value = label.color;
+  }
 
   Future<void> _pickColor(
       BuildContext context, TextTheme textTheme, ColorScheme colorScheme) async {
@@ -114,11 +120,16 @@ class AddLabelScreen extends GetView<LabelController> {
 
   @override
   Widget build(BuildContext context) {
+
+    print(label.name);
+    _initializeController();
+
+
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Add Label"), centerTitle: true),
+      appBar: AppBar(title: Text("Update Label"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -157,7 +168,7 @@ class AddLabelScreen extends GetView<LabelController> {
 
             // Label name input
             TextFormField(
-              controller: labelNameController,
+              controller: labelNameController..text = label.name,
               textAlign: TextAlign.start,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
@@ -172,7 +183,7 @@ class AddLabelScreen extends GetView<LabelController> {
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 14, horizontal: 16),
-              )
+              ),
             ),
 
             const SizedBox(height: 16),
@@ -189,10 +200,10 @@ class AddLabelScreen extends GetView<LabelController> {
                   backgroundColor: colorScheme.primary,
                 ),
                 onPressed: () {
-                  _saveLabel();
+                  _updateLabel();
                 },
                 child: Text(
-                  "Save Label",
+                  "Update Label",
                   style: textTheme.titleMedium?.copyWith(
                     color: colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
@@ -208,7 +219,7 @@ class AddLabelScreen extends GetView<LabelController> {
     );
   }
 
-  _saveLabel() async {
+  _updateLabel() async {
     final labelName = labelNameController.text.trim();
 
     // --- Validation messages ---
@@ -216,7 +227,7 @@ class AddLabelScreen extends GetView<LabelController> {
 
     if (labelName.isEmpty) {
       errors.add("Label name is required");
-    } else if (await controller.isNameExists(labelName)) {
+    } else if (labelName != label.name && await controller.isNameExists(labelName)) {
       errors.add("Label name already exists");
     }
 
@@ -235,8 +246,8 @@ class AddLabelScreen extends GetView<LabelController> {
 
     // --- Save the label if validation passes ---
     controller.name.value = labelName;
-    await controller.createLabel();
-    Get.back();
+    await controller.updateLabel(id: label.id, fieldsToUpdate: ['name', 'color']);
+    Get.until((route) => Get.currentRoute == "/LabelListScreen");
   }
 
 

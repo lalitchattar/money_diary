@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:money_diary/app/module/label/view/label_details_screen.dart';
 import 'package:money_diary/app/utils/utility.dart';
 
 import '../controller/label_controller.dart';
@@ -30,10 +31,7 @@ class LabelListScreen extends GetView<LabelController> {
           label: const Text("Add Label"),
           onPressed: () async {
             controller.reset();
-            var newLabel = await Get.to(() => AddLabelScreen());
-            if (newLabel != null) {
-              controller.labels.add(newLabel); // RxList updates UI smoothly
-            }
+            Get.to(() => AddLabelScreen());
           },
         )
             : null,
@@ -130,7 +128,7 @@ class LabelListScreen extends GetView<LabelController> {
             highlightColor: colorScheme.primary.withOpacity(0.04),
             onTap: () {
               controller.reset();
-              //Get.to(() => EditLabelScreen(), arguments: label);
+              Get.to(() => LabelDetailsScreen(), arguments: label);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
