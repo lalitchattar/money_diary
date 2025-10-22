@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:money_diary/app/module/label/controller/label_controller.dart';
+import 'package:money_diary/app/module/merchant/controller/merchant_controller.dart';
 
 import '../../general/view/general_settings_screen.dart';
 import '../../label/view/label_list_screen.dart';
+import '../../merchant/view/merchant_list_screen.dart';
 
 
 class MoreScreen extends StatelessWidget {
@@ -90,11 +92,18 @@ class MoreScreen extends StatelessWidget {
             _buildSettingItem(context,
                 icon: Icons.category,
                 title: 'Categories',
-                subtitle: 'Organize income and expense category'),
+                subtitle: 'Organize income and expense category',
+                ),
             _buildSettingItem(context,
                 icon: Icons.store,
                 title: 'Merchants',
-                subtitle: 'Track where you spend or earn'),
+                subtitle: 'Track where you spend or earn',
+                onTap: () => {
+                  Get.to(() => MerchantListScreen(), binding: BindingsBuilder((){
+                    Get.lazyPut(() => MerchantController(), fenix: true);
+                  }))
+                }
+            ),
             _buildSettingItem(context,
                 icon: Icons.label,
                 title: 'Labels',
