@@ -4,6 +4,7 @@ import 'package:money_diary/app/module/label/controller/label_controller.dart';
 import 'package:money_diary/app/utils/utility.dart';
 
 import '../../../custom/widget/validation_message_screen.dart';
+import '../../../data/model/label_model.dart';
 
 class AddLabelScreen extends GetView<LabelController> {
 
@@ -238,8 +239,8 @@ class AddLabelScreen extends GetView<LabelController> {
 
     // --- Save the label if validation passes ---
     controller.name.value = labelName;
-    controller.createLabel();
-    Get.back();
+    Label label = await controller.createLabel();
+    Get.back(result: label);
   }
 
 

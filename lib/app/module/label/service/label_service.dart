@@ -44,14 +44,17 @@ class LabelService {
 
   }
 
-  Future<void> createLabel(String name, String selectedColor) async {
+  Future<Label> createLabel(String name, String selectedColor) async {
     var label = Label(name: name.trim(), color: selectedColor);
-    try{
+    try {
       await repo.createLabel(label);
+      return label; // Return the label so caller can use it
     } catch (e, stack) {
       appLogger.e('Error creating label:', error: e, stackTrace: stack);
+      rethrow;
     }
   }
+
 
   Future<bool> isNameExists(String labelName) async {
     final label = await repo.getLabelByName(labelName.trim());

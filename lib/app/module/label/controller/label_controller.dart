@@ -22,8 +22,10 @@ class LabelController extends GetxController {
 
   @override
   void onInit() async {
+    if(labels.isEmpty) {
+      await getAllLabels();
+    }
     super.onInit();
-    await getAllLabels();
   }
 
   Future<void> getAllLabels() async {
@@ -33,9 +35,8 @@ class LabelController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<void> createLabel() async {
-    await labelService.createLabel(name.value.trim(), selectedColor.value);
-    await getAllLabels();
+  Future<Label> createLabel() async {
+    return await labelService.createLabel(name.value.trim(), selectedColor.value);
   }
 
   /*Future<void> updateLabel({int? id, List<String>? fieldsToUpdate}) async {

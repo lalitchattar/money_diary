@@ -28,12 +28,16 @@ class LabelListScreen extends GetView<LabelController> {
             ? FloatingActionButton.extended(
           icon: const Icon(Icons.add),
           label: const Text("Add Label"),
-          onPressed: () {
+          onPressed: () async {
             controller.reset();
-            Get.to(() => AddLabelScreen());
+            var newLabel = await Get.to(() => AddLabelScreen());
+            if (newLabel != null) {
+              controller.labels.add(newLabel); // RxList updates UI smoothly
+            }
           },
         )
             : null,
+            resizeToAvoidBottomInset: false,
       ),
     );
   }

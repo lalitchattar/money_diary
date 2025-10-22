@@ -6,12 +6,14 @@ import '../model/label_model.dart';
 class LabelRepository {
   final dbHelper = DatabaseHelper();
 
-  Future<void> createLabel(Label label) async {
+  Future<Label> createLabel(Label label) async {
     try {
       final db = await dbHelper.database;
       await db.insert('labels', label.toMap());
+      return label; // Return the label after inserting
     } catch (e, stack) {
       appLogger.e('Error creating label: ${label.name}', error: e, stackTrace: stack);
+      rethrow;
     }
   }
 
