@@ -128,7 +128,7 @@ class EditMerchantScreen extends GetView<MerchantController> {
 
     if (name.isEmpty) {
       errors.add("Merchant name is required");
-    } else if (await controller.isNameExists(name, controller.type.value)) {
+    } else if (merchant.name != name && await controller.isNameExists(name, controller.type.value)) {
       errors.add("Merchant name already exists");
     }
 
