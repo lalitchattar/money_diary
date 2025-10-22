@@ -142,6 +142,7 @@ class MerchantListScreen extends GetView<MerchantController> {
                     children: [
                       CircleAvatar(
                         radius: 24,
+                        backgroundColor: colorScheme.surfaceContainerLow,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: merchant.icon != null && merchant.icon!.startsWith('/data')

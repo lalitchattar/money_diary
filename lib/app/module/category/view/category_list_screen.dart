@@ -136,6 +136,7 @@ class CategoryListScreen extends GetView<CategoryController> {
                     children: [
                       CircleAvatar(
                         radius: 24,
+                        backgroundColor: colorScheme.surfaceContainerLow,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.asset(
