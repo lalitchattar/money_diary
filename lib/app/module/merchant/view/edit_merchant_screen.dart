@@ -155,7 +155,7 @@ class EditMerchantScreen extends GetView<MerchantController> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Merchant"), centerTitle: true),
+      appBar: AppBar(title: const Text("Edit Merchant"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
