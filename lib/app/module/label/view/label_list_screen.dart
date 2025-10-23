@@ -14,7 +14,7 @@ class LabelListScreen extends GetView<LabelController> {
     final textTheme = Theme.of(context).textTheme;
 
     return Obx(
-          () => Scaffold(
+      () => Scaffold(
         appBar: AppBar(title: const Text("Labels"), centerTitle: true),
         body: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
@@ -26,14 +26,18 @@ class LabelListScreen extends GetView<LabelController> {
         ),
         floatingActionButton: controller.labels.isNotEmpty
             ? FloatingActionButton.extended(
-          icon: const Icon(Icons.add),
-          label: const Text("Add Label"),
-          onPressed: () {
-            controller.reset();
-            Get.to(() => AddLabelScreen());
-          },
-        )
-            : null,
+                icon: const Icon(Icons.add),
+                label: const Text("Add Label"),
+                onPressed: () {
+                  FocusScope.of(
+                    context,
+                  ).unfocus(); // ✅ Close keyboard before navigation
+                  controller.reset();
+                  Get.to(() => AddLabelScreen());
+                },
+              )
+            : const SizedBox.shrink(),
+
         resizeToAvoidBottomInset: false,
       ),
     );
@@ -47,7 +51,10 @@ class LabelListScreen extends GetView<LabelController> {
   );
 
   Widget _buildEmptyState(
-      BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -87,7 +94,10 @@ class LabelListScreen extends GetView<LabelController> {
   }
 
   Widget _buildLabelList(
-      BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+  ) {
     return Column(
       children: [
         // 🔍 Search field
@@ -100,8 +110,10 @@ class LabelListScreen extends GetView<LabelController> {
               hintText: 'Search merchants...',
               filled: true,
               fillColor: colorScheme.surfaceContainerLow,
-              contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 0,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(color: colorScheme.outlineVariant),
@@ -125,8 +137,9 @@ class LabelListScreen extends GetView<LabelController> {
               return Center(
                 child: Text(
                   "No matching labels found",
-                  style: textTheme.bodyMedium
-                      ?.copyWith(color: colorScheme.onSurfaceVariant),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
               );
             }
@@ -145,7 +158,9 @@ class LabelListScreen extends GetView<LabelController> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                     side: BorderSide(
-                        color: colorScheme.outlineVariant, width: 1),
+                      color: colorScheme.outlineVariant,
+                      width: 1,
+                    ),
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(14),
@@ -157,7 +172,9 @@ class LabelListScreen extends GetView<LabelController> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 12),
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -167,10 +184,11 @@ class LabelListScreen extends GetView<LabelController> {
                             children: [
                               CircleAvatar(
                                 radius: 24,
-                                backgroundColor:
-                                getColorFromHex(label.color),
-                                child: const Icon(Icons.label,
-                                    color: Colors.white),
+                                backgroundColor: getColorFromHex(label.color),
+                                child: const Icon(
+                                  Icons.label,
+                                  color: Colors.white,
+                                ),
                               ),
                               Positioned(
                                 right: 0,
@@ -213,7 +231,9 @@ class LabelListScreen extends GetView<LabelController> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: colorScheme.secondaryContainer,
                                   borderRadius: BorderRadius.circular(14),

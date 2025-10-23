@@ -17,11 +17,10 @@ class MerchantService {
 
   }
 
-  Future<Merchant> createMerchant(String name, String type, String icon) async {
+  Future<Merchant?> createMerchant(String name, String type, String icon) async {
     var merchant = Merchant(name: name.trim(), type: type, icon: icon);
     try {
-      await repo.createMerchant(merchant);
-      return merchant; // Return the merchant so caller can use it
+     return await repo.createMerchant(merchant);
     } catch (e, stack) {
       appLogger.e('Error creating label:', error: e, stackTrace: stack);
       rethrow;
@@ -42,4 +41,16 @@ class MerchantService {
       rethrow;
     }
   }
+
+  Future<Merchant?> getMerchant(int id) async {
+    return await repo.getMerchant(id);
+  }
+
+  Future<Merchant?> getMerchantByName(String name, String merchantType) async {
+    return await repo.getMerchantByName(name, merchantType);
+  }
+
+  Future<void> deactivateLabel(int id) => repo.deactivateMerchant(id);
+  Future<void> activateLabel(int id) => repo.activateMerchants(id);
+  Future<void> deleteLabel(int id) => repo.deleteMerchant(id);
 }

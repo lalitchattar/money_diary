@@ -20,12 +20,17 @@ class Label {
     String? name,
     String? color,
     bool? isActive,
+    bool? isDeleted,
+    int? transactionCount
   }) {
     return Label(
       id: id ?? this.id,
       name: name ?? this.name,
       color: color ?? this.color,
       isActive: isActive ?? this.isActive,
+      isDeleted: isDeleted ?? this.isDeleted,
+      transactionCount: transactionCount ?? 0
+
     );
   }
 

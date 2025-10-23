@@ -144,7 +144,7 @@ class EditMerchantScreen extends GetView<MerchantController> {
       return;
     }
 
-    await controller.updateMerchant(id: merchant.id, fieldsToUpdate: ['name', 'type', 'icon']);();
+    await controller.updateMerchant(id: merchant.id!, fieldsToUpdate: ['name', 'type', 'icon']);();
     Get.until((route) => route.settings.name == "/MerchantListScreen");
   }
 

@@ -10,8 +10,8 @@ class MerchantRepository {
   Future<Merchant> createMerchant(Merchant merchant) async {
     try {
       final db = await dbHelper.database;
-      await db.insert('merchants', merchant.toMap());
-      return merchant; // Return the merchant after inserting
+      final id = await db.insert('merchants', merchant.toMap());
+      return merchant.copyWith(id: id);
     } catch (e, stack) {
       appLogger.e('Error creating merchant: ${merchant.name}', error: e, stackTrace: stack);
       rethrow;
@@ -57,7 +57,7 @@ class MerchantRepository {
     }
   }
 
-  Future<Merchant?> getMerchantById(int id) async {
+  Future<Merchant?> getMerchant(int id) async {
     try {
       final db = await dbHelper.database;
       final result = await db.query(
@@ -83,7 +83,7 @@ class MerchantRepository {
       final db = await dbHelper.database;
       final result = await db.query(
         'merchants',
-        where: 'name = ? and type = ? and is_deleted = ?',
+        where: 'LOWER(name) = ? and type = ? and is_deleted = ?',
         whereArgs: [name, merchantType, 0],
         limit: 1,
       );
