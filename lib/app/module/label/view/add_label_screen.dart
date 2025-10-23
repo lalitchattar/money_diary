@@ -8,8 +8,6 @@ import '../../../data/model/label_model.dart';
 
 class AddLabelScreen extends GetView<LabelController> {
 
-  final TextEditingController labelNameController = TextEditingController();
-
   AddLabelScreen({super.key});
 
   Future<void> _pickColor(
@@ -157,7 +155,7 @@ class AddLabelScreen extends GetView<LabelController> {
 
             // Label name input
             TextFormField(
-              controller: labelNameController,
+              controller: controller.labelNameController,
               textAlign: TextAlign.start,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
@@ -209,7 +207,7 @@ class AddLabelScreen extends GetView<LabelController> {
   }
 
   _saveLabel() async {
-    final labelName = labelNameController.text.trim();
+    final labelName = controller.labelNameController.text.trim();
 
     // --- Validation messages ---
     final errors = <String>[];
@@ -236,6 +234,8 @@ class AddLabelScreen extends GetView<LabelController> {
     // --- Save the label if validation passes ---
     controller.name.value = labelName;
     await controller.createLabel();
+    controller.reset();
+    FocusScope.of(Get.context!).unfocus();
     Get.back();
   }
 

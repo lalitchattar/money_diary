@@ -15,6 +15,8 @@ class LabelController extends GetxController {
   final selectedColor = '#3F51B5'.obs;
   final isLoading = false.obs;
 
+  late TextEditingController labelNameController;
+
   final LabelService labelService;
 
   LabelController({LabelService? service}) : labelService = service ?? LabelService();
@@ -25,6 +27,8 @@ class LabelController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    labelNameController = TextEditingController();
 
     // Fetch once
     _fetchLabels();
@@ -110,5 +114,13 @@ class LabelController extends GetxController {
   void reset() {
     name.value = '';
     selectedColor.value = '#3F51B5';
+    labelNameController.clear();
+  }
+
+  @override
+  void onClose() {
+    labelNameController.dispose(); // dispose when controller is removed
+    super.onClose();
   }
 }
+

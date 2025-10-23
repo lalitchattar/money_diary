@@ -9,7 +9,6 @@ import '../../../data/model/label_model.dart';
 class EditLabelScreen extends GetView<LabelController> {
 
   final Label label = Get.arguments;
-  final TextEditingController labelNameController = TextEditingController();
 
   EditLabelScreen({super.key});
 
@@ -168,7 +167,7 @@ class EditLabelScreen extends GetView<LabelController> {
 
             // Label name input
             TextFormField(
-              controller: labelNameController..text = label.name,
+              controller: controller.labelNameController..text = label.name,
               textAlign: TextAlign.start,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
@@ -220,7 +219,7 @@ class EditLabelScreen extends GetView<LabelController> {
   }
 
   _updateLabel() async {
-    final labelName = labelNameController.text.trim();
+    final labelName = controller.labelNameController.text.trim();
 
     // --- Validation messages ---
     final errors = <String>[];
@@ -247,11 +246,10 @@ class EditLabelScreen extends GetView<LabelController> {
     // --- Save the label if validation passes ---
     controller.name.value = labelName;
     await controller.updateLabel(id: label.id!, fieldsToUpdate: ['name', 'color']);
+    controller.reset();
+    FocusScope.of(Get.context!).unfocus();
     Get.until((route) => route.settings.name == "/LabelListScreen");
   }
-
-
-
 
 
 }
