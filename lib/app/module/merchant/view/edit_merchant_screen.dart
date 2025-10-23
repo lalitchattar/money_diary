@@ -145,7 +145,7 @@ class EditMerchantScreen extends GetView<MerchantController> {
     }
 
     await controller.updateMerchant(id: merchant.id, fieldsToUpdate: ['name', 'type', 'icon']);();
-    Get.until((route) => Get.currentRoute == "/MerchantListScreen");
+    Get.until((route) => route.settings.name == "/MerchantListScreen");
   }
 
   @override

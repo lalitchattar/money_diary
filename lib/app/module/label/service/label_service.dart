@@ -69,4 +69,34 @@ class LabelService {
       rethrow;
     }
   }
+
+  Future<Label?> deactivateLabel(int id) async {
+    try {
+      return await repo.deactivateLabel(id);
+    } catch (e, stack) {
+      appLogger.e('Error deactivating label:', error: e, stackTrace: stack);
+      rethrow;
+    }
+  }
+
+
+  Future<Label?> activateLabel(int id) async {
+    try {
+      return await repo.activateLabel(id);
+    } catch (e, stack) {
+      appLogger.e('Error activating label:', error: e, stackTrace: stack);
+      rethrow;
+    }
+  }
+
+  Future<void> deleteLabel(int id) async {
+    try {
+      await repo.deleteLabel(id);
+    } catch (e, stack) {
+      appLogger.e('Error deleting label:', error: e, stackTrace: stack);
+      rethrow;
+    }
+  }
+
+
 }

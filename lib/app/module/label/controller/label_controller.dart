@@ -60,6 +60,39 @@ class LabelController extends GetxController {
     }
   }
 
+  Future<void> deactivateLabel(int id) async {
+    // Call service to deactivate the label and get the updated label
+    final updatedLabel = await labelService.deactivateLabel(id);
+
+    // Find index of the existing label in the list
+    final index = labels.indexWhere((lbl) => lbl.id == id);
+
+    if (index != -1) {
+      // Update the label in memory (RxList will auto-refresh the UI)
+      labels[index] = updatedLabel!;
+    } else {
+      // Optional: add it if not found
+      labels.add(updatedLabel!);
+    }
+  }
+
+
+  Future<void> activateLabel(int id) async {
+    // Call service to deactivate the label and get the updated label
+    final updatedLabel = await labelService.activateLabel(id);
+
+    // Find index of the existing label in the list
+    final index = labels.indexWhere((lbl) => lbl.id == id);
+
+    if (index != -1) {
+      // Update the label in memory (RxList will auto-refresh the UI)
+      labels[index] = updatedLabel!;
+    } else {
+      // Optional: add it if not found
+      labels.add(updatedLabel!);
+    }
+  }
+
 
   Future<bool> isNameExists(String labelName) async {
     return await labelService.isNameExists(labelName.trim());
@@ -77,6 +110,13 @@ class LabelController extends GetxController {
 
       filteredLabels.assignAll(list);
     }
+  }
+
+  Future<void> deleteLabel(int id) async {
+    await labelService.deleteLabel(id);
+    // Find index of the existing label in the list
+    final index = labels.indexWhere((lbl) => lbl.id == id);
+    labels.removeAt(index);
   }
 
 
