@@ -15,6 +15,20 @@ class Label {
     this.transactionCount = 0,
   });
 
+  Label copyWith({
+    int? id,
+    String? name,
+    String? color,
+    bool? isActive,
+  }) {
+    return Label(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      color: color ?? this.color,
+      isActive: isActive ?? this.isActive,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,

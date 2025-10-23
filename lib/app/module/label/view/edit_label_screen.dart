@@ -246,7 +246,7 @@ class EditLabelScreen extends GetView<LabelController> {
 
     // --- Save the label if validation passes ---
     controller.name.value = labelName;
-    await controller.updateLabel(id: label.id, fieldsToUpdate: ['name', 'color']);
+    await controller.updateLabel(id: label.id!, fieldsToUpdate: ['name', 'color']);
     Get.until((route) => route.settings.name == "/LabelListScreen");
   }
 

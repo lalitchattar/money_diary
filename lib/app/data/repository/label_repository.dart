@@ -9,13 +9,18 @@ class LabelRepository {
   Future<Label> createLabel(Label label) async {
     try {
       final db = await dbHelper.database;
-      await db.insert('labels', label.toMap());
-      return label; // Return the label after inserting
+
+      // Insert returns the generated id
+      final id = await db.insert('labels', label.toMap());
+
+      // Return a new Label instance with the id
+      return label.copyWith(id: id);
     } catch (e, stack) {
       appLogger.e('Error creating label: ${label.name}', error: e, stackTrace: stack);
       rethrow;
     }
   }
+
 
   Future<void> updateLabel(Label label, {List<String>? fieldsToUpdate}) async {
     try {
@@ -48,13 +53,19 @@ class LabelRepository {
   Future<List<Label>> getAllLabels() async {
     try {
       final db = await dbHelper.database;
-      final maps = await db.query('labels', where: 'is_deleted = ?', whereArgs: [0]);
-      return maps.map((map) => Label.fromMap(map)).toList();
+      final maps = await db.query(
+        'labels',
+        where: 'is_deleted = ?',
+        whereArgs: [0],
+        orderBy: 'name ASC',
+      );
+      return maps.map(Label.fromMap).toList();
     } catch (e, stack) {
-      appLogger.e('Error fetching all labels', error: e, stackTrace: stack);
+      appLogger.e('Error fetching labels', error: e, stackTrace: stack);
       return [];
     }
   }
+
 
   Future<Label?> getLabel(int id) async {
     try {
@@ -82,21 +93,21 @@ class LabelRepository {
       final db = await dbHelper.database;
       final result = await db.query(
         'labels',
-        where: 'name = ? and is_deleted = ?',
-        whereArgs: [name, 0],
+        where: 'LOWER(name) = ? AND is_deleted = ?',
+        whereArgs: [name.toLowerCase(), 0],
         limit: 1,
       );
 
       if (result.isNotEmpty) {
         return Label.fromMap(result.first);
-      } else {
-        return null;
       }
+      return null;
     } catch (e, stack) {
-      appLogger.e('Error activating label id: $name', error: e, stackTrace: stack);
+      appLogger.e('Error fetching label with name: $name', error: e, stackTrace: stack);
       return null;
     }
   }
+
 
   Future<int> deleteLabel(int id) async {
     try {
@@ -113,7 +124,7 @@ class LabelRepository {
     }
   }
 
-  Future<Label?> deactivateLabel(int id) async {
+  Future<void> deactivateLabel(int id) async {
     try {
       final db = await dbHelper.database;
 
@@ -124,28 +135,13 @@ class LabelRepository {
         where: 'id = ?',
         whereArgs: [id],
       );
-
-      // Step 2: Fetch the updated label
-      final maps = await db.query(
-        'labels',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-
-      if (maps.isNotEmpty) {
-        // Step 3: Convert map to Label object
-        return Label.fromMap(maps.first);
-      } else {
-        return null; // Not found
-      }
     } catch (e, stack) {
       appLogger.e('Error deactivating label id: $id', error: e, stackTrace: stack);
-      return null;
     }
   }
 
 
-  Future<Label?> activateLabel(int id) async {
+  Future<void> activateLabel(int id) async {
     try {
       final db = await dbHelper.database;
 
@@ -156,23 +152,8 @@ class LabelRepository {
         where: 'id = ?',
         whereArgs: [id],
       );
-
-      // Step 2: Fetch the updated label
-      final maps = await db.query(
-        'labels',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-
-      if (maps.isNotEmpty) {
-        // Step 3: Convert map to Label object
-        return Label.fromMap(maps.first);
-      } else {
-        return null; // Not found
-      }
     } catch (e, stack) {
       appLogger.e('Error activating label id: $id', error: e, stackTrace: stack);
-      return null;
     }
   }
 
