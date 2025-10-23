@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:money_diary/app/data/repository/label_repository.dart';
 import 'package:money_diary/app/module/label/service/label_service.dart';
 
 import '../../../data/model/label_model.dart';
@@ -10,6 +9,8 @@ class LabelController extends GetxController {
   var labels = <Label>[].obs;
   var name = ''.obs;
   var selectedColor = '#3F51B5'.obs;
+  final filteredLabels = <Label>[].obs;
+  final searchQuery = ''.obs;
   var isLoading = false.obs;
 
   var labelService = LabelService();
@@ -26,12 +27,14 @@ class LabelController extends GetxController {
       await getAllLabels();
     }
     super.onInit();
+    applyFilter();
   }
 
   Future<void> getAllLabels() async {
     isLoading.value = true;
     final result = await labelService.getAllLabels();
     labels.assignAll(result);
+    everAll([labels, searchQuery], (_) => applyFilter());
     isLoading.value = false;
   }
 
@@ -61,6 +64,21 @@ class LabelController extends GetxController {
   Future<bool> isNameExists(String labelName) async {
     return await labelService.isNameExists(labelName.trim());
   }
+
+  void applyFilter() {
+    final query = searchQuery.value.toLowerCase();
+
+    if (query.isEmpty) {
+      filteredLabels.assignAll(labels);
+    } else {
+      final list = labels.where((label) {
+        return label.name.toLowerCase().contains(query);
+      }).toList();
+
+      filteredLabels.assignAll(list);
+    }
+  }
+
 
   void reset() {
     name.value = '';

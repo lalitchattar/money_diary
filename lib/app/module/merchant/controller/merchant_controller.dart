@@ -9,6 +9,8 @@ class MerchantController extends GetxController {
   var name = ''.obs;
   var type = 'Expense'.obs;
   var selectedImage = Rx<File?>(null);
+  final RxList<Merchant> filteredMerchants = <Merchant>[].obs;
+  final RxString searchQuery = ''.obs;
   var isLoading = false.obs;
 
   var merchantService = MerchantService();
@@ -19,13 +21,15 @@ class MerchantController extends GetxController {
       await getAllMerchants();
     }
     super.onInit();
+
+    everAll([merchants, searchQuery], (_) => applyFilter());
   }
 
   Future<void> getAllMerchants() async {
     isLoading.value = true;
     final result = await merchantService.getAllMerchants();
-    merchants();
     merchants.assignAll(result);
+    applyFilter();
     isLoading.value = false;
   }
 
@@ -58,6 +62,20 @@ class MerchantController extends GetxController {
   Future<bool> isNameExists(String merchantName, String merchantType) async {
     return await merchantService.isNameExists(merchantName.trim(), merchantType);
   }
+
+  void applyFilter() {
+    final query = searchQuery.value.trim().toLowerCase();
+    if (query.isEmpty) {
+      filteredMerchants.assignAll(merchants);
+    } else {
+      filteredMerchants.assignAll(
+        merchants.where((m) =>
+        m.name.toLowerCase().contains(query) ||
+            m.type.toLowerCase().contains(query)),
+      );
+    }
+  }
+
 
   void reset() {
     name.value = '';

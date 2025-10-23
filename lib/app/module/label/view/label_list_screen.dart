@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:money_diary/app/module/label/view/label_details_screen.dart';
 import 'package:money_diary/app/utils/utility.dart';
-
 import '../controller/label_controller.dart';
 import 'add_label_screen.dart';
 
@@ -16,12 +15,12 @@ class LabelListScreen extends GetView<LabelController> {
 
     return Obx(
           () => Scaffold(
-        appBar: AppBar(title: Text("Labels"), centerTitle: true),
+        appBar: AppBar(title: const Text("Labels"), centerTitle: true),
         body: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: controller.isLoading.value
-              ? _buildLoader(context, colorScheme)
-              : controller.labels.isEmpty
+              ? _buildLoader(colorScheme)
+              : controller.filteredLabels.isEmpty
               ? _buildEmptyState(context, colorScheme, textTheme)
               : _buildLabelList(context, colorScheme, textTheme),
         ),
@@ -29,39 +28,33 @@ class LabelListScreen extends GetView<LabelController> {
             ? FloatingActionButton.extended(
           icon: const Icon(Icons.add),
           label: const Text("Add Label"),
-          onPressed: () async {
+          onPressed: () {
             controller.reset();
             Get.to(() => AddLabelScreen());
           },
         )
             : null,
-            resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: false,
       ),
     );
   }
 
-  Widget _buildLoader(BuildContext context, ColorScheme colorScheme) {
-    return Center(
-      child: CircularProgressIndicator(
-        color: colorScheme.primary,
-        strokeWidth: 3,
-      ),
-    );
-  }
+  Widget _buildLoader(ColorScheme colorScheme) => Center(
+    child: CircularProgressIndicator(
+      color: colorScheme.primary,
+      strokeWidth: 3,
+    ),
+  );
 
-  /// --- Empty State View ---
   Widget _buildEmptyState(
-      BuildContext context,
-      ColorScheme colorScheme,
-      TextTheme textTheme,
-      ) {
+      BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.label, size: 100, color: colorScheme.primary,),
+            Icon(Icons.label, size: 100, color: colorScheme.primary),
             const SizedBox(height: 24),
             Text(
               "No Labels Yet",
@@ -74,9 +67,8 @@ class LabelListScreen extends GetView<LabelController> {
             Text(
               "Labels help you organize your transactions.\nCreate your first label now!",
               textAlign: TextAlign.center,
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w400,
-                color: colorScheme.onSurface,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 24),
@@ -87,13 +79,6 @@ class LabelListScreen extends GetView<LabelController> {
               },
               icon: const Icon(Icons.add),
               label: const Text("Add Label"),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 14,
-                ),
-                textStyle: const TextStyle(fontWeight: FontWeight.w600),
-              ),
             ),
           ],
         ),
@@ -102,140 +87,164 @@ class LabelListScreen extends GetView<LabelController> {
   }
 
   Widget _buildLabelList(
-      BuildContext context,
-      ColorScheme colorScheme,
-      TextTheme textTheme,
-      ) {
-
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      itemCount: controller.labels.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final label = controller.labels[index];
-
-        return Card(
-          color: colorScheme.surfaceContainerLow,
-          elevation: 0,
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide(color: colorScheme.outlineVariant, width: 1),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(14),
-            splashColor: colorScheme.primary.withOpacity(0.08),
-            highlightColor: colorScheme.primary.withOpacity(0.04),
-            onTap: () {
-              controller.reset();
-              Get.to(() => LabelDetailsScreen(), arguments: label);
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Leading colored circle with status halo
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CircleAvatar(
-                          radius: 24,
-                          backgroundColor: getColorFromHex(label.color),
-                          child: Icon(Icons.label, color: Colors.white,)
-                      ),
-                      if (label.isActive)
-                        Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.greenAccent,
-                              border: Border.all(
-                                color: colorScheme.surface,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        )
-                      else
-                        Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.redAccent,
-                              border: Border.all(
-                                color: colorScheme.surface,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-
-                  const SizedBox(width: 16),
-
-                  // Label name
-                  Expanded(
-                    child: Text(
-                      label.name,
-                      style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-
-                  // Transaction count badge
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Text(
-                          '${label.transactionCount}',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSecondaryContainer,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        'Transaction${label.transactionCount > 1 ? 's' : ''}',
-                        style: textTheme.labelSmall?.copyWith(
-                          color: colorScheme.secondary,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+      BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
+    return Column(
+      children: [
+        // 🔍 Search field
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+          child: TextField(
+            onChanged: (value) => controller.searchQuery.value = value.trim(),
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              hintText: 'Search merchants...',
+              filled: true,
+              fillColor: colorScheme.surfaceContainerLow,
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: colorScheme.outlineVariant),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: colorScheme.outlineVariant),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: colorScheme.primary, width: 1.2),
               ),
             ),
           ),
-        );
-      },
+        ),
+
+        Expanded(
+          child: Obx(() {
+            final labels = controller.filteredLabels;
+            if (labels.isEmpty) {
+              return Center(
+                child: Text(
+                  "No matching labels found",
+                  style: textTheme.bodyMedium
+                      ?.copyWith(color: colorScheme.onSurfaceVariant),
+                ),
+              );
+            }
+
+            return ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              itemCount: labels.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final label = labels[index];
+
+                return Card(
+                  color: colorScheme.surfaceContainerLow,
+                  elevation: 0,
+                  margin: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(
+                        color: colorScheme.outlineVariant, width: 1),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    splashColor: colorScheme.primary.withOpacity(0.08),
+                    highlightColor: colorScheme.primary.withOpacity(0.04),
+                    onTap: () {
+                      controller.reset();
+                      Get.to(() => LabelDetailsScreen(), arguments: label);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Label icon
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 24,
+                                backgroundColor:
+                                getColorFromHex(label.color),
+                                child: const Icon(Icons.label,
+                                    color: Colors.white),
+                              ),
+                              Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: label.isActive
+                                        ? Colors.greenAccent
+                                        : Colors.redAccent,
+                                    border: Border.all(
+                                      color: colorScheme.surface,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(width: 16),
+
+                          // Label name
+                          Expanded(
+                            child: Text(
+                              label.name,
+                              style: textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+
+                          // Transaction count
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.secondaryContainer,
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Text(
+                                  '${label.transactionCount}',
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSecondaryContainer,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'Transaction${label.transactionCount > 1 ? 's' : ''}',
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: colorScheme.secondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
+        ),
+      ],
     );
   }
-
 }

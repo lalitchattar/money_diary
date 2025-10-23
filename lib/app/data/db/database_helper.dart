@@ -18,7 +18,7 @@ class DatabaseHelper {
     final path = join(await getDatabasesPath(), 'money_diary.db');
     return await openDatabase(
       path,
-      version: 4, // Increment version if adding new table
+      version: 1, // Increment version if adding new table
       onCreate: (db, version) async {
         // Settings table already exists in old version; we create anyway for new installs
         await _createSettingsTable(db);
@@ -27,15 +27,6 @@ class DatabaseHelper {
         await _createCategoryTable(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        if(oldVersion < 2) {
-          await _createLabelTable(db);
-        }
-        if(oldVersion < 3) {
-          await _createMerchantTable(db);
-        }
-        if(oldVersion < 4) {
-          await _createCategoryTable(db);
-        }
       },
     );
   }
@@ -110,7 +101,27 @@ class DatabaseHelper {
         (9, 'Donations', 'Expense', 'assets/icons/donation.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
         (10, 'Education', 'Expense', 'assets/icons/education.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
         (11, 'Entertainment', 'Expense', 'assets/icons/entertainment.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
-        (12, 'Movie', 'Expense', 'assets/icons/movie.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL);
+        (12, 'Movie', 'Expense', 'assets/icons/movie.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (13, 'Food & Drink', 'Expense', 'assets/icons/food-and-drink.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (14, 'Fuel', 'Expense', 'assets/icons/fuel.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (15, 'Gas', 'Expense', 'assets/icons/gas.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (16, 'Groceries', 'Expense', 'assets/icons/groceries.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (17, 'Health', 'Expense', 'assets/icons/health.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (18, 'Medicine', 'Expense', 'assets/icons/medicine.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (19, 'Rent', 'Expense', 'assets/icons/rent.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (20, 'Housekeeping', 'Expense', 'assets/icons/housekeeping.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (21, 'Insurance', 'Expense', 'assets/icons/insurance.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (22, 'Jewellery', 'Expense', 'assets/icons/jewellery.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (23, 'Kids', 'Expense', 'assets/icons/kids.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (24, 'Maintenance', 'Expense', 'assets/icons/maintenance.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (25, 'Recharge', 'Expense', 'assets/icons/recharge.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (26, 'Shopping', 'Expense', 'assets/icons/shopping.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (27, 'Electronics', 'Expense', 'assets/icons/electronics.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (28, 'Stationery', 'Expense', 'assets/icons/stationery.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (29, 'Transport', 'Expense', 'assets/icons/transport.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (30, 'Tax', 'Expense', 'assets/icons/tax.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL),
+        (31, 'Travel', 'Expense', 'assets/icons/travel.png', 1, 0, 0, CURRENT_TIMESTAMP, NULL);
+
     ''');
   }
 
