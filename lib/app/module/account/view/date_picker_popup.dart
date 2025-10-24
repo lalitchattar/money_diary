@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DatePickerPopup {
-  static Future<String?> pickDate(BuildContext context) async {
+  static Future<int?> pickDate(BuildContext context, String title) async {
     DateTime now = DateTime.now();
-    final selectedDate = await showDialog<DateTime>(
+    final selectedDate = await showDialog<int>(
       context: context,
       builder: (_) {
         DateTime tempSelected = now;
@@ -16,13 +16,13 @@ class DatePickerPopup {
             builder: (context, setState) {
               final daysInMonth = DateUtils.getDaysInMonth(now.year, now.month);
               return SizedBox(
-                height: 300,
+                height: 310,
                 child: Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Text(
-                        "${now.month}/${now.year}",
+                        title,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -31,8 +31,7 @@ class DatePickerPopup {
                     Expanded(
                       child: GridView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 7,
                           mainAxisSpacing: 8,
                           crossAxisSpacing: 8,
@@ -43,30 +42,23 @@ class DatePickerPopup {
                           final isSelected = tempSelected.day == day;
                           return GestureDetector(
                             onTap: () {
-                              tempSelected =
-                                  DateTime(now.year, now.month, day);
-                              Navigator.of(context).pop(tempSelected);
+                              tempSelected = DateTime(now.year, now.month, day);
+                              Navigator.of(context).pop(day); // return day number
                             },
                             child: Container(
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context)
-                                    .colorScheme
-                                    .surfaceVariant,
+                                    : Theme.of(context).colorScheme.surfaceVariant,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 "$day",
                                 style: TextStyle(
                                   color: isSelected
-                                      ? Theme.of(context)
-                                      .colorScheme
-                                      .onPrimary
-                                      : Theme.of(context)
-                                      .colorScheme
-                                      .onSurface,
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.onSurface,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -88,9 +80,6 @@ class DatePickerPopup {
       },
     );
 
-    if (selectedDate != null) {
-      return "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-    }
-    return null;
+    return selectedDate; // will be the selected day number or null
   }
 }

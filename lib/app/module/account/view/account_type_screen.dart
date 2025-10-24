@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:money_diary/app/module/account/controller/bank_account_controller.dart';
 import 'package:money_diary/app/module/account/controller/cash_account_controller.dart';
+import 'package:money_diary/app/module/account/controller/credit_card_account_controller.dart';
+import 'package:money_diary/app/module/account/controller/family_account_controller.dart';
 import 'package:money_diary/app/module/account/controller/lending_account_controller.dart';
 import 'package:money_diary/app/module/account/controller/wallet_account_controller.dart';
 import 'package:money_diary/app/module/account/view/add_bank_account_screen.dart';
 import 'package:money_diary/app/module/account/view/add_cash_account_screen.dart';
+import 'package:money_diary/app/module/account/view/add_credit_card_screen.dart';
+import 'package:money_diary/app/module/account/view/add_family_member_account_screen.dart';
 import 'package:money_diary/app/module/account/view/add_lending_account_screen.dart';
 import 'package:money_diary/app/module/account/view/add_wallet_account_screen.dart';
 import 'package:money_diary/app/module/category/view/category_list_screen.dart';
@@ -75,18 +79,32 @@ class SelectAccountTypeScreen extends StatelessWidget {
                       }),
                     );
                   }),
-                  _buildAccountCard(context, 'assets/icons/family.png', 'Family Member', () => {}),
+                  _buildAccountCard(context, 'assets/icons/family.png', 'Family Member', () {
+                    Get.to(
+                          () => AddFamilyMemberAccountScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.lazyPut(() => FamilyMemberAccountController(), fenix: true);
+                      }),
+                    );
+                  }),
                 ],
               ),
               _buildCategory(
                 context,
                 'Credit',
                 [
-                  _buildAccountCard(context, 'assets/icons/credit.png', 'Credit', () => {}),
+                  _buildAccountCard(context, 'assets/icons/credit.png', 'Credit Card', () {
+                    Get.to(
+                          () => AddCreditAccountScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.lazyPut(() => CreditCardAccountController(), fenix: true);
+                      }),
+                    );
+                  }),
                   _buildAccountCard(context, 'assets/icons/line-of-credit.png', 'Line of Credit', () => {}),
                 ],
               ),
-              _buildCategory(
+             /* _buildCategory(
                 context,
                 'Investment',
                 [
@@ -112,7 +130,7 @@ class SelectAccountTypeScreen extends StatelessWidget {
                 [
                   _buildAccountCard(context, 'assets/icons/assets.png', 'Property', () => {}),
                 ],
-              ),
+              ),*/
 
             ],
           ),

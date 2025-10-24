@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:money_diary/app/module/account/controller/bank_account_controller.dart';
+import 'package:money_diary/app/module/account/controller/family_account_controller.dart';
 import 'package:money_diary/app/module/account/controller/lending_account_controller.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-class AddLendingAccountScreen extends GetView<LendingAccountController> {
+class AddFamilyMemberAccountScreen extends GetView<FamilyMemberAccountController> {
   final ImagePicker _picker = ImagePicker();
 
-  AddLendingAccountScreen({super.key});
+  AddFamilyMemberAccountScreen({super.key});
 
   /// 📷 Pick image from camera or gallery and store it in app directory
   Future<void> _pickImage(
@@ -105,7 +106,7 @@ class AddLendingAccountScreen extends GetView<LendingAccountController> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Lending Account"), centerTitle: true),
+      appBar: AppBar(title: const Text("Add Family Member Account"), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -127,7 +128,7 @@ class AddLendingAccountScreen extends GetView<LendingAccountController> {
                         fit: BoxFit.cover,
                       )
                           : Image.asset(
-                        'assets/icons/borrow.png',
+                        'assets/icons/family.png',
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
@@ -155,11 +156,11 @@ class AddLendingAccountScreen extends GetView<LendingAccountController> {
 
             // 🏷️ Account Name
             TextFormField(
-              controller: controller.contactNameController,
+              controller: controller.memberNameController,
               textAlign: TextAlign.start,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
-                labelText: "Contact Name",
+                labelText: "Family Member Name",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -176,12 +177,11 @@ class AddLendingAccountScreen extends GetView<LendingAccountController> {
 
             // 🔢 Account Number
             TextFormField(
-              controller: controller.contactNumberController,
+              controller: controller.relationController,
               textAlign: TextAlign.start,
-              keyboardType: TextInputType.number,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
-                labelText: "Contact Number",
+                labelText: "Relation",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -196,26 +196,6 @@ class AddLendingAccountScreen extends GetView<LendingAccountController> {
 
             const SizedBox(height: 20),
 
-            TextFormField(
-              controller: controller.contactEmailController,
-              textAlign: TextAlign.start,
-              keyboardType: TextInputType.emailAddress,
-              style: textTheme.titleMedium,
-              decoration: InputDecoration(
-                labelText: "Contact Email",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                contentPadding:
-                const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-              ),
-            ),
-
-            const SizedBox(height: 20),
 
             // 💰 Initial Balance
             TextFormField(

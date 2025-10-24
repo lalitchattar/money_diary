@@ -234,6 +234,7 @@ class AddWalletAccountScreen extends GetView<WalletAccountController> {
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                           height: 1.3,
+                          fontSize: 15
                         ),
                       ),
                     ),

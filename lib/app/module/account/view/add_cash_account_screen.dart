@@ -211,6 +211,7 @@ class AddCashAccountScreen extends GetView<CashAccountController> {
                         "Include balance of this account\ninto overall balance or net worth",
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
+                          fontSize: 15,
                           height: 1.3,
                         ),
                       ),
