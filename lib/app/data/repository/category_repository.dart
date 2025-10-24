@@ -84,7 +84,7 @@ class CategoryRepository {
       final db = await dbHelper.database;
       final result = await db.query(
         'categories',
-        where: 'LOWER(name) = ? and type = ? and is_deleted = ?',
+        where: 'LOWER(name) = LOWER(?) and type = ? and is_deleted = ?',
         whereArgs: [name, categoryType, 0],
         limit: 1,
       );

@@ -83,7 +83,7 @@ class MerchantRepository {
       final db = await dbHelper.database;
       final result = await db.query(
         'merchants',
-        where: 'LOWER(name) = ? and type = ? and is_deleted = ?',
+        where: 'LOWER(name) = LOWER(?) and type = ? and is_deleted = ?',
         whereArgs: [name, merchantType, 0],
         limit: 1,
       );

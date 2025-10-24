@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:money_diary/app/module/category/controller/category_controller.dart';
 
+import 'add_category_screen.dart';
+
 class CategoryListScreen extends GetView<CategoryController> {
   const CategoryListScreen({super.key});
 
@@ -28,7 +30,7 @@ class CategoryListScreen extends GetView<CategoryController> {
           onPressed: () {
             FocusScope.of(context).unfocus(); // ✅ closes keyboard
             controller.reset();
-            // Get.to(() => AddCategoryScreen());
+             Get.to(() => AddCategoryScreen());
           },
         );
       }),

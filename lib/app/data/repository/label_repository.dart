@@ -93,7 +93,7 @@ class LabelRepository {
       final db = await dbHelper.database;
       final result = await db.query(
         'labels',
-        where: 'LOWER(name) = ? AND is_deleted = ?',
+        where: 'LOWER(name) = LOWER(?) AND is_deleted = ?',
         whereArgs: [name.toLowerCase(), 0],
         limit: 1,
       );

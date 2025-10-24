@@ -7,9 +7,11 @@ import '../service/category_service.dart';
 class CategoryController extends GetxController {
   var categories = <Category>[].obs;
   var filteredCategories = <Category>[].obs;
-  var selectedImage = Rx<File?>(null);
+  var selectedIcon = 'assets/icons/categories.png'.obs;
   var name = ''.obs;
   var type = 'Expense'.obs;
+
+  final icons = <String>[];
 
   var isLoading = false.obs;
   var searchQuery = ''.obs;
@@ -34,16 +36,17 @@ class CategoryController extends GetxController {
     // Debounced filter
     ever(searchQuery, (_) => applyFilter());
     ever(categories, (_) => applyFilter());
+
+    icons.assignAll(categoryService.icons);
+
   }
 
 
   Future<void> createCategory() async {
-    String imagePath =
-        selectedImage.value?.path ?? 'assets/images/default_merchant.png';
     Category? category = await categoryService.createCategory(
       name.value.trim(),
       type.value,
-      imagePath,
+      selectedIcon.value,
     );
     if (category != null) {
       categories.add(category);
@@ -58,12 +61,9 @@ class CategoryController extends GetxController {
     Category? category = await categoryService.getCategory(id);
 
     if (category != null) {
-      String imagePath =
-          selectedImage.value?.path ?? 'assets/images/default_merchant.png';
-
       category.name = name.value.trim();
       category.type = type.value;
-      category.icon = imagePath;
+      category.icon = selectedIcon.value;
 
       categoryService.updateCategory(category, fieldsToUpdate);
 
@@ -136,8 +136,8 @@ class CategoryController extends GetxController {
 
   void reset() {
     name.value = '';
-    type.value = '';
-    selectedImage.value = null;
+    type.value = 'Expense';
+    selectedIcon.value = 'assets/icons/categories.png';
     categoryNameController.clear();
   }
 
