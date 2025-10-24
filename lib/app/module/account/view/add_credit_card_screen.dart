@@ -274,8 +274,10 @@ class AddCreditAccountScreen extends GetView<CreditCardAccountController> {
           keyboardType: TextInputType.none,
           onTap: () async {
             var day = await DatePickerPopup.pickDate(context, 'Select Bill Generation Date');
-            controller.billGeneration.value = day!;
-            controller.billGenerationDateDisplayController.text = "${day} of every month";
+           if(day != null) {
+             controller.billGeneration.value = day;
+             controller.billGenerationDateDisplayController.text = "$day of every month";
+           }
           }
         ),
         const SizedBox(height: 20),
@@ -287,8 +289,10 @@ class AddCreditAccountScreen extends GetView<CreditCardAccountController> {
             keyboardType: TextInputType.none,
             onTap: () async {
              var day = await DatePickerPopup.pickDate(context, 'Select Bill Due Date');
-              controller.billDueDateDisplayController.text = "${day} of every month";
-              controller.billDueDate.value = day!;
+              if(day != null) {
+                controller.billDueDateDisplayController.text = "$day of every month";
+                controller.billDueDate.value = day;
+              }
             }
         ),
         const SizedBox(height: 24),

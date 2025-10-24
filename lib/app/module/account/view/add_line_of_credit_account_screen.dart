@@ -105,7 +105,7 @@ class AddLineOfCreditAccountScreen extends GetView<LineOfCreditAccountController
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Bank Account"), centerTitle: true),
+      appBar: AppBar(title: const Text("Add Line of Credit Account"), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
