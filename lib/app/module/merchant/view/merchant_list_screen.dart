@@ -27,19 +27,15 @@ class MerchantListScreen extends GetView<MerchantController> {
 
         return _buildMerchantList(context, colorScheme, textTheme);
       }),
-      floatingActionButton: controller.merchants.isNotEmpty
-          ? FloatingActionButton.extended(
-              icon: const Icon(Icons.add),
-              label: const Text("Add Merchant"),
-              onPressed: () {
-                FocusScope.of(
-                  context,
-                ).unfocus(); // ✅ Close keyboard before navigation
-                controller.reset();
-                Get.to(() => AddMerchantScreen());
-              },
-            )
-          : const SizedBox.shrink(),
+        floatingActionButton: controller.merchants.isNotEmpty ? FloatingActionButton.extended(
+          icon: const Icon(Icons.add),
+          label: const Text("Add Merchant"),
+          onPressed: () {
+            FocusScope.of(context).unfocus(); // Close keyboard
+            controller.reset();
+            Get.to(() => AddMerchantScreen());
+          },
+        ) : const SizedBox.shrink(),
 
       resizeToAvoidBottomInset: false,
     );

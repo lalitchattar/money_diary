@@ -34,8 +34,8 @@ class LabelController extends GetxController {
     _fetchLabels();
 
     // Debounced filter
-    ever(searchQuery, (_) => _applyFilter());
-    ever(labels, (_) => _applyFilter());
+    ever(searchQuery, (_) => applyFilter());
+    ever(labels, (_) => applyFilter());
   }
 
   Future<void> _fetchLabels() async {
@@ -100,15 +100,17 @@ class LabelController extends GetxController {
 
 
 
-  void _applyFilter() {
+
+  void applyFilter() {
     final query = searchQuery.value.toLowerCase();
-    if (query.isEmpty) {
-      filteredLabels.assignAll(labels);
-    } else {
-      filteredLabels.assignAll(
-        labels.where((l) => l.name.toLowerCase().contains(query)),
-      );
-    }
+
+    // Filter first by type, then by search query
+    final filtered = labels.where((category) {
+      final matchesQuery = category.name.toLowerCase().contains(query);
+      return  matchesQuery;
+    }).toList();
+
+    filteredLabels.assignAll(filtered);
   }
 
   void reset() {

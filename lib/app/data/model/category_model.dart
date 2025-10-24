@@ -17,6 +17,27 @@ class Category {
     this.transactionCount = 0,
   });
 
+  Category copyWith({
+    int? id,
+    String? name,
+    String? type,
+    String? icon,
+    bool? isActive,
+    bool? isDeleted,
+    int? transactionCount
+  }) {
+    return Category(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        type: type ?? this.type,
+        icon: icon ?? this.icon,
+        isActive: isActive ?? this.isActive,
+        isDeleted: isDeleted ?? this.isDeleted,
+        transactionCount: transactionCount ?? 0
+
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,

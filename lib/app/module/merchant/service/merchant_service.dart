@@ -11,7 +11,7 @@ class MerchantService {
     try{
       return await repo.getAllMerchants();
     } catch(e, stack) {
-      appLogger.e('Error creating label:', error: e, stackTrace: stack);
+      appLogger.e('Error creating merchant:', error: e, stackTrace: stack);
       return [];
     }
 
@@ -22,7 +22,7 @@ class MerchantService {
     try {
      return await repo.createMerchant(merchant);
     } catch (e, stack) {
-      appLogger.e('Error creating label:', error: e, stackTrace: stack);
+      appLogger.e('Error creating merchant:', error: e, stackTrace: stack);
       rethrow;
     }
   }
@@ -50,7 +50,7 @@ class MerchantService {
     return await repo.getMerchantByName(name, merchantType);
   }
 
-  Future<void> deactivateLabel(int id) => repo.deactivateMerchant(id);
-  Future<void> activateLabel(int id) => repo.activateMerchants(id);
-  Future<void> deleteLabel(int id) => repo.deleteMerchant(id);
+  Future<void> deactivateMerchant(int id) => repo.deactivateMerchant(id);
+  Future<void> activateMerchant(int id) => repo.activateMerchants(id);
+  Future<void> deleteMerchant(int id) => repo.deleteMerchant(id);
 }

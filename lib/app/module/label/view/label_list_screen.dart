@@ -20,7 +20,7 @@ class LabelListScreen extends GetView<LabelController> {
           duration: const Duration(milliseconds: 300),
           child: controller.isLoading.value
               ? _buildLoader(colorScheme)
-              : controller.filteredLabels.isEmpty
+              : controller.labels.isEmpty
               ? _buildEmptyState(context, colorScheme, textTheme)
               : _buildLabelList(context, colorScheme, textTheme),
         ),

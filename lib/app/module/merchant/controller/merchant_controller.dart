@@ -79,13 +79,13 @@ class MerchantController extends GetxController {
   }
 
   Future<void> deleteMerchant(int id) async {
-    await merchantService.deleteLabel(id);
+    await merchantService.deleteMerchant(id);
     merchants.removeWhere((e) => e.id == id);
     reset();
   }
 
   Future<void> deactivateMerchant(int id) async {
-    await merchantService.deactivateLabel(id);
+    await merchantService.deactivateMerchant(id);
     final index = merchants.indexWhere((e) => e.id == id);
     if (index != -1) {
       final updatedMerchant = merchants[index].copyWith(isActive: false);
@@ -95,7 +95,7 @@ class MerchantController extends GetxController {
   }
 
   Future<void> activateMerchant(int id) async {
-    await merchantService.activateLabel(id);
+    await merchantService.activateMerchant(id);
     final index = merchants.indexWhere((e) => e.id == id);
     if (index != -1) {
       final updatedMerchant = merchants[index].copyWith(isActive: true);
