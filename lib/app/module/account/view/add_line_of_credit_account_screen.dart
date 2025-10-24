@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:money_diary/app/module/account/controller/bank_account_controller.dart';
-import 'package:money_diary/app/module/account/controller/wallet_account_controller.dart';
+import 'package:money_diary/app/module/account/controller/line_of_credit_account_controller.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-class AddWalletAccountScreen extends GetView<WalletAccountController> {
+class AddLineOfCreditAccountScreen extends GetView<LineOfCreditAccountController> {
   final ImagePicker _picker = ImagePicker();
 
-  AddWalletAccountScreen({super.key});
+  AddLineOfCreditAccountScreen({super.key});
 
   /// 📷 Pick image from camera or gallery and store it in app directory
   Future<void> _pickImage(
@@ -105,7 +105,7 @@ class AddWalletAccountScreen extends GetView<WalletAccountController> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Wallet Account"), centerTitle: true),
+      appBar: AppBar(title: const Text("Add Bank Account"), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -127,7 +127,7 @@ class AddWalletAccountScreen extends GetView<WalletAccountController> {
                         fit: BoxFit.cover,
                       )
                           : Image.asset(
-                        'assets/icons/wallet.png',
+                        'assets/icons/bank.png',
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
@@ -198,12 +198,34 @@ class AddWalletAccountScreen extends GetView<WalletAccountController> {
 
             // 💰 Initial Balance
             TextFormField(
-              controller: controller.initialBalanceController,
+              controller: controller.startingDueAmountController,
               textAlign: TextAlign.start,
-              keyboardType:TextInputType.number,
+              keyboardType: TextInputType.number,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
-                labelText: "Initial Balance",
+                labelText: "Initial Due Amount",
+                prefixText: "₹ ",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding:
+                const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            TextFormField(
+              controller: controller.startingDueAmountController,
+              textAlign: TextAlign.start,
+              keyboardType: TextInputType.number,
+              style: textTheme.titleMedium,
+              decoration: InputDecoration(
+                labelText: "Credit Limit",
                 prefixText: "₹ ",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),

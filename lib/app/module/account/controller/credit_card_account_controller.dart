@@ -9,18 +9,18 @@ class CreditCardAccountController extends GetxController {
   final currentStep = 0.obs;
 
   // Step 1
-  final accountNameController = TextEditingController();
-  final accountNumberController = TextEditingController();
-  final creditLimitController = TextEditingController();
+  late TextEditingController accountNameController;
+  late TextEditingController accountNumberController;
+  late TextEditingController creditLimitController;
   final selectedImage = Rx<File?>(null);
 
   // Step 2
-  final outstandingAmountController = TextEditingController();
+  late TextEditingController outstandingAmountController;
   final billGeneration = RxInt(1);
   final billDueDate = RxInt(1);
   //for display
-  final billGenerationDateDisplayController = TextEditingController();
-  final billDueDateDisplayController = TextEditingController();
+  late TextEditingController billGenerationDateDisplayController;
+  late TextEditingController billDueDateDisplayController;
 
   final includeInNetWorth = false.obs;
 
@@ -29,6 +29,18 @@ class CreditCardAccountController extends GetxController {
   final cardUtilization = RxDouble(30.0);
   final generateBillReminder = RxBool(false);
   final utilizationAlert = RxBool(false);
+
+  @override
+  void onInit() async {
+    super.onInit();
+    accountNameController = TextEditingController();
+    accountNumberController = TextEditingController();
+    creditLimitController = TextEditingController();
+    outstandingAmountController = TextEditingController();
+    billGenerationDateDisplayController = TextEditingController();
+    billDueDateDisplayController = TextEditingController();
+
+  }
 
   void nextStep() {
     if (currentStep.value < 3) currentStep.value++;

@@ -178,8 +178,7 @@ class AddCashAccountScreen extends GetView<CashAccountController> {
             TextFormField(
               controller: controller.initialBalanceController,
               textAlign: TextAlign.start,
-              keyboardType:
-              const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: TextInputType.number,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
                 labelText: "Initial Balance",

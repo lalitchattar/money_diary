@@ -201,8 +201,7 @@ class AddFamilyMemberAccountScreen extends GetView<FamilyMemberAccountController
             TextFormField(
               controller: controller.initialBalanceController,
               textAlign: TextAlign.start,
-              keyboardType:
-              const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:TextInputType.number,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
                 labelText: "Initial Balance",

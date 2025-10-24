@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AddCreditCardScreen extends StatefulWidget {
-  const AddCreditCardScreen({super.key});
+class AddCreditCardScreen1 extends StatefulWidget {
+  const AddCreditCardScreen1({super.key});
 
   @override
-  State<AddCreditCardScreen> createState() => _AddCreditCardScreenState();
+  State<AddCreditCardScreen1> createState() => _AddCreditCardScreenState();
 }
 
-class _AddCreditCardScreenState extends State<AddCreditCardScreen> {
+class _AddCreditCardScreenState extends State<AddCreditCardScreen1> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _accountTypeController =
