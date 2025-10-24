@@ -1,4 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:money_diary/app/module/account/controller/bank_account_controller.dart';
+import 'package:money_diary/app/module/account/controller/cash_account_controller.dart';
+import 'package:money_diary/app/module/account/controller/lending_account_controller.dart';
+import 'package:money_diary/app/module/account/controller/wallet_account_controller.dart';
+import 'package:money_diary/app/module/account/view/add_bank_account_screen.dart';
+import 'package:money_diary/app/module/account/view/add_cash_account_screen.dart';
+import 'package:money_diary/app/module/account/view/add_lending_account_screen.dart';
+import 'package:money_diary/app/module/account/view/add_wallet_account_screen.dart';
+import 'package:money_diary/app/module/category/view/category_list_screen.dart';
 
 class SelectAccountTypeScreen extends StatelessWidget {
   const SelectAccountTypeScreen({super.key});
@@ -32,46 +42,75 @@ class SelectAccountTypeScreen extends StatelessWidget {
                 context,
                 'Cash',
                 [
-                  _buildAccountCard(context, 'assets/icons/bank.png', 'Bank'),
-                  _buildAccountCard(context, 'assets/icons/dollar.png', 'Cash'),
-                  _buildAccountCard(context, 'assets/icons/wallet.png', 'Wallet'),
-                  _buildAccountCard(context, 'assets/icons/saving.png', 'Savings'),
-                  _buildAccountCard(context, 'assets/icons/borrow.png', 'Lending'),
+                  _buildAccountCard(context, 'assets/icons/bank.png', 'Bank',  () {
+                    Get.to(
+                          () => AddBankAccountScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.lazyPut(() => BankAccountController(), fenix: true);
+                      }),
+                    );
+                  },),
+                  _buildAccountCard(context, 'assets/icons/dollar.png', 'Cash', () {
+                    Get.to(
+                          () => AddCashAccountScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.lazyPut(() => CashAccountController(), fenix: true);
+                      }),
+                    );
+                  }),
+                  _buildAccountCard(context, 'assets/icons/wallet.png', 'Wallet', () {
+                    Get.to(
+                          () => AddWalletAccountScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.lazyPut(() => WalletAccountController(), fenix: true);
+                      }),
+                    );
+                  }),
+                  //_buildAccountCard(context, 'assets/icons/saving.png', 'Savings', () => {}),
+                  _buildAccountCard(context, 'assets/icons/borrow.png', 'Lending', () {
+                    Get.to(
+                          () => AddLendingAccountScreen(),
+                      binding: BindingsBuilder(() {
+                        Get.lazyPut(() => LendingAccountController(), fenix: true);
+                      }),
+                    );
+                  }),
+                  _buildAccountCard(context, 'assets/icons/family.png', 'Family Member', () => {}),
                 ],
               ),
               _buildCategory(
                 context,
                 'Credit',
                 [
-                  _buildAccountCard(context, 'assets/icons/credit.png', 'Credit'),
-                  _buildAccountCard(context, 'assets/icons/line-of-credit.png', 'Line of Credit'),
+                  _buildAccountCard(context, 'assets/icons/credit.png', 'Credit', () => {}),
+                  _buildAccountCard(context, 'assets/icons/line-of-credit.png', 'Line of Credit', () => {}),
                 ],
               ),
               _buildCategory(
                 context,
                 'Investment',
                 [
-                  _buildAccountCard(context, 'assets/icons/retirement.png', 'Retirement'),
-                  _buildAccountCard(context, 'assets/icons/brokerage.png', 'Brokerage'),
-                  _buildAccountCard(context, 'assets/icons/investment.png', 'Investment'),
-                  _buildAccountCard(context, 'assets/icons/insurance.png', 'Insurance'),
-                  _buildAccountCard(context, 'assets/icons/bitcoin.png', 'Crypto'),
+                  _buildAccountCard(context, 'assets/icons/retirement.png', 'Retirement', () => {}),
+                  _buildAccountCard(context, 'assets/icons/brokerage.png', 'Brokerage', () => {}),
+                  _buildAccountCard(context, 'assets/icons/investment.png', 'Investment', () => {}),
+                  _buildAccountCard(context, 'assets/icons/insurance.png', 'Insurance', () => {}),
+                  _buildAccountCard(context, 'assets/icons/bitcoin.png', 'Crypto', () => {}),
                 ],
               ),
               _buildCategory(
                 context,
                 'Loans',
                 [
-                  _buildAccountCard(context, 'assets/icons/loan.png', 'Loan'),
-                  _buildAccountCard(context, 'assets/icons/mortgage.png', 'Mortgage'),
-                  _buildAccountCard(context, 'assets/icons/debt.png', 'Borrowing'),
+                  _buildAccountCard(context, 'assets/icons/loan.png', 'Loan', () => {}),
+                  _buildAccountCard(context, 'assets/icons/mortgage.png', 'Mortgage', () => {}),
+                  _buildAccountCard(context, 'assets/icons/debt.png', 'Borrowing', () => {}),
                 ],
               ),
               _buildCategory(
                 context,
                 'Assets',
                 [
-                  _buildAccountCard(context, 'assets/icons/assets.png', 'Property'),
+                  _buildAccountCard(context, 'assets/icons/assets.png', 'Property', () => {}),
                 ],
               ),
 
@@ -113,7 +152,7 @@ class SelectAccountTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAccountCard(BuildContext context, String icon, String label) {
+  Widget _buildAccountCard(BuildContext context, String icon, String label, VoidCallback onTap) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -123,7 +162,7 @@ class SelectAccountTypeScreen extends StatelessWidget {
       elevation: 0,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {},
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           child: Column(
