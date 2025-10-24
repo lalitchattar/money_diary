@@ -121,6 +121,20 @@ class CategoryService {
     'assets/icons/wedding.png',
     'assets/icons/plates.png',
     'assets/icons/cookware.png',
+    'assets/icons/bank.png',
+    'assets/icons/dollar.png',
+    'assets/icons/wallet.png',
+    'assets/icons/borrow.png',
+    'assets/icons/credit.png',
+    'assets/icons/line-of-credit.png',
+    'assets/icons/retirement.png',
+    'assets/icons/brokerage.png',
+    'assets/icons/investment.png',
+    'assets/icons/bitcoin.png',
+    'assets/icons/loan.png',
+    'assets/icons/mortgage.png',
+    'assets/icons/debt.png',
+    'assets/icons/assets.png'
   ];
 
   var repo = CategoryRepository();
