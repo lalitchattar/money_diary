@@ -119,6 +119,8 @@ class CategoryService {
     'assets/icons/voucher.png',
     'assets/icons/water-tap.png',
     'assets/icons/wedding.png',
+    'assets/icons/plates.png',
+    'assets/icons/cookware.png',
   ];
 
   var repo = CategoryRepository();
