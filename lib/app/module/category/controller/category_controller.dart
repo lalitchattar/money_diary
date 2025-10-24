@@ -54,7 +54,7 @@ class CategoryController extends GetxController {
     }
   }
 
-  Future<void> updateMerchant({
+  Future<void> updateCategory({
     required int id,
     List<String>? fieldsToUpdate,
   }) async {
@@ -107,7 +107,7 @@ class CategoryController extends GetxController {
     reset();
   }
 
-  Future<void> deactivateMerchant(int id) async {
+  Future<void> deactivateCategory(int id) async {
     await categoryService.deactivateCategory(id);
     final index = categories.indexWhere((e) => e.id == id);
     if (index != -1) {
@@ -117,7 +117,7 @@ class CategoryController extends GetxController {
     reset();
   }
 
-  Future<void> activateMerchant(int id) async {
+  Future<void> activateCategory(int id) async {
     await categoryService.activateCategory(id);
     final index = categories.indexWhere((e) => e.id == id);
     if (index != -1) {

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:money_diary/app/module/merchant/controller/merchant_controller.dart';
-import 'package:money_diary/app/module/merchant/view/edit_merchant_screen.dart';
+import 'package:money_diary/app/module/category/controller/category_controller.dart';
+import 'package:money_diary/app/module/category/view/edit_category_screen.dart';
 
-import '../../../data/model/merchant_model.dart';
+import '../../../data/model/category_model.dart';
 
-class MerchantDetailsScreen extends GetView<MerchantController> {
-  final Merchant merchant = Get.arguments;
 
-  MerchantDetailsScreen({super.key});
+class CategoryDetailsScreen extends GetView<CategoryController> {
+  final Category category = Get.arguments;
+
+  CategoryDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class MerchantDetailsScreen extends GetView<MerchantController> {
         actions: [
           IconButton(
             onPressed: () {
-              Get.to(() => EditMerchantScreen(), arguments: merchant);
+              Get.to(() => EditCategoryScreen(), arguments: category);
             },
             icon: Icon(Icons.edit),
           ),
@@ -27,9 +28,9 @@ class MerchantDetailsScreen extends GetView<MerchantController> {
             onPressed: () {
               Get.defaultDialog(
                 titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                title: merchant.isActive ? 'Deactivate Merchant?' : 'Activate Merchant?',
+                title: category.isActive ? 'Deactivate Category?' : 'Activate Category?',
                 titleStyle: Theme.of(context).textTheme.titleLarge,
-                middleText: 'Are you sure you want to ${merchant.isActive ? 'deactivate' : 'activate'} ${merchant.name}?',
+                middleText: 'Are you sure you want to ${category.isActive ? 'deactivate' : 'activate'} ${category.name}?',
                 middleTextStyle: Theme.of(context).textTheme.bodyMedium,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 //actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -47,12 +48,12 @@ class MerchantDetailsScreen extends GetView<MerchantController> {
                       Flexible(
                         child: FilledButton.tonal(
                           onPressed: () async {
-                            if (merchant.isActive) {
-                              await controller.deactivateMerchant(merchant.id!);
+                            if (category.isActive) {
+                              await controller.deactivateCategory(category.id!);
                             } else {
-                              await controller.activateMerchant(merchant.id!);
+                              await controller.activateCategory(category.id!);
                             }
-                            Get.until((route) => route.settings.name == '/MerchantListScreen');
+                            Get.until((route) => route.settings.name == '/CategoryListScreen');
                           },
                           child: const Text('Yes'),
                         ),
@@ -67,16 +68,16 @@ class MerchantDetailsScreen extends GetView<MerchantController> {
                 radius: 16,
               );
             },
-            icon: merchant.isActive
+            icon: category.isActive
                 ? Icon(Icons.toggle_off)
                 : Icon(Icons.toggle_on),
           ),
           IconButton(onPressed: () {
             Get.defaultDialog(
               titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-              title: 'Delete Merchant?',
+              title: 'Delete Category?',
               titleStyle: Theme.of(context).textTheme.titleLarge,
-              middleText: 'Are you sure you want to delete ${merchant.name}?',
+              middleText: 'Are you sure you want to delete ${category.name}?',
               middleTextStyle: Theme.of(context).textTheme.bodyMedium,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               //actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -94,8 +95,8 @@ class MerchantDetailsScreen extends GetView<MerchantController> {
                     Flexible(
                       child: FilledButton.tonal(
                         onPressed: () async {
-                          await controller.deleteMerchant(merchant.id!);
-                          Get.until((route) => route.settings.name == '/MerchantListScreen');
+                          await controller.deleteCategory(category.id!);
+                          Get.until((route) => route.settings.name == '/CategoryListScreen');
                         },
                         child: const Text('Yes'),
                       ),

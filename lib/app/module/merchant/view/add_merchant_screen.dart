@@ -8,7 +8,6 @@ import '../../../custom/widget/validation_message_screen.dart';
 import '../controller/merchant_controller.dart';
 
 class AddMerchantScreen extends GetView<MerchantController> {
-  final TextEditingController merchantNameController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
   AddMerchantScreen({super.key});
@@ -103,7 +102,7 @@ class AddMerchantScreen extends GetView<MerchantController> {
 
   /// 💾 Validate and save merchant
   Future<void> _saveMerchant() async {
-    final name = merchantNameController.text.trim();
+    final name = controller.merchantNameController.text.trim();
     controller.name.value = name;
     final errors = <String>[];
 
@@ -202,7 +201,7 @@ class AddMerchantScreen extends GetView<MerchantController> {
 
             // 🏷️ Merchant name field
             TextFormField(
-              controller: merchantNameController,
+              controller: controller.merchantNameController,
               textAlign: TextAlign.start,
               style: textTheme.titleMedium,
               decoration: InputDecoration(

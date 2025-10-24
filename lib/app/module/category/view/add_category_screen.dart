@@ -4,7 +4,6 @@ import 'package:money_diary/app/module/category/controller/category_controller.d
 import '../../../custom/widget/validation_message_screen.dart';
 
 class AddCategoryScreen extends GetView<CategoryController> {
-  final TextEditingController categoryNameController = TextEditingController();
 
   AddCategoryScreen({super.key});
 
@@ -94,7 +93,7 @@ class AddCategoryScreen extends GetView<CategoryController> {
 
   /// 💾 Validate and save category
   Future<void> _saveCategory() async {
-    final name = categoryNameController.text.trim();
+    final name = controller.categoryNameController.text.trim();
     controller.name.value = name;
     final errors = <String>[];
 
@@ -182,7 +181,7 @@ class AddCategoryScreen extends GetView<CategoryController> {
 
             // 🏷️ Category name field
             TextFormField(
-              controller: categoryNameController,
+              controller: controller.categoryNameController,
               textAlign: TextAlign.start,
               style: textTheme.titleMedium,
               decoration: InputDecoration(

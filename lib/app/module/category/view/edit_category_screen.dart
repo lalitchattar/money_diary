@@ -1,40 +1,27 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:money_diary/app/data/model/merchant_model.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
+import 'package:money_diary/app/data/model/category_model.dart';
+import 'package:money_diary/app/module/category/controller/category_controller.dart';
 import '../../../custom/widget/validation_message_screen.dart';
-import '../controller/merchant_controller.dart';
 
-class EditMerchantScreen extends GetView<MerchantController> {
+class EditCategoryScreen extends GetView<CategoryController> {
 
-  final Merchant merchant = Get.arguments;
-  final ImagePicker _picker = ImagePicker();
-
-  EditMerchantScreen({super.key});
+  final Category category = Get.arguments;
+  EditCategoryScreen({super.key});
 
   void _initializeController() {
-    controller.name.value = merchant.name;
-    controller.type.value = merchant.type;
-
-    if (merchant.icon != null && merchant.icon!.startsWith('/data')) {
-      // Local file from gallery/camera
-      controller.selectedImage.value = File(merchant.icon!);
-    } else {
-      // Asset image or null → let UI show default
-      controller.selectedImage.value = null;
-    }
+    controller.name.value = category.name;
+    controller.type.value = category.type;
+    controller.selectedIcon.value = category.icon!;
 
     // Pre-fill text controller
-    controller.merchantNameController.text = merchant.name;
+    controller.categoryNameController.text = category.name;
   }
 
-  /// 📷 Pick image from camera or gallery and store it in app directory
-  Future<void> _pickImage(
+  /// 📁 Open bottom sheet to select an icon from assets/icons
+  Future<void> _pickIcon(
       BuildContext context, TextTheme textTheme, ColorScheme colorScheme) async {
-    final choice = await showModalBottomSheet<String>(
+    final selectedIcon = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       backgroundColor: colorScheme.surface,
@@ -61,7 +48,7 @@ class EditMerchantScreen extends GetView<MerchantController> {
                 child: Row(
                   children: [
                     Text(
-                      'Choose an Image',
+                      'Select Icon',
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -75,22 +62,33 @@ class EditMerchantScreen extends GetView<MerchantController> {
                 ),
               ),
               const Divider(height: 8),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.photo_camera, color: colorScheme.primary),
-                      title: const Text('Take a Photo'),
-                      onTap: () => Navigator.pop(context, 'camera'),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.photo_library, color: colorScheme.primary),
-                      title: const Text('Choose from Gallery'),
-                      onTap: () => Navigator.pop(context, 'gallery'),
-                    ),
-                  ],
+              Flexible(
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: controller.icons.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                  ),
+                  itemBuilder: (context, index) {
+                    final icon = controller.icons[index];
+                    return GestureDetector(
+                      onTap: () => Navigator.pop(context, icon),
+                      child: Card(
+                        elevation: 0,
+                        color: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Image.asset(icon, height: 25, width: 25,),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -99,36 +97,21 @@ class EditMerchantScreen extends GetView<MerchantController> {
       },
     );
 
-    if (choice == null) return;
-
-    // Pick image
-    final pickedFile = await _picker.pickImage(
-      source: choice == 'camera' ? ImageSource.camera : ImageSource.gallery,
-      imageQuality: 80,
-    );
-
-    if (pickedFile != null) {
-      // Save to app directory
-      final appDir = await getApplicationDocumentsDirectory();
-      final fileName =
-          '${DateTime.now().millisecondsSinceEpoch}_${path.basename(pickedFile.path)}';
-      final savedImage = await File(pickedFile.path).copy('${appDir.path}/$fileName');
-
-      // Store locally in controller
-      controller.selectedImage.value = savedImage;
+    if (selectedIcon != null) {
+      controller.selectedIcon.value = selectedIcon;
     }
   }
 
-  /// 💾 Validate and save merchant
-  Future<void> _updateMerchant() async {
-    final name = controller.merchantNameController.text.trim();
+  /// 💾 Validate and save category
+  Future<void> _updateCategory() async {
+    final name = controller.categoryNameController.text.trim();
     controller.name.value = name;
     final errors = <String>[];
 
     if (name.isEmpty) {
-      errors.add("Merchant name is required");
-    } else if (merchant.name != name && await controller.isNameExists(name, controller.type.value)) {
-      errors.add("Merchant name already exists");
+      errors.add("Category name is required");
+    } else if (name != category.name && await controller.isNameExists(name, controller.type.value)) {
+      errors.add("Category name already exists");
     }
 
     if (errors.isNotEmpty) {
@@ -143,8 +126,8 @@ class EditMerchantScreen extends GetView<MerchantController> {
       return;
     }
 
-    await controller.updateMerchant(id: merchant.id!, fieldsToUpdate: ['name', 'type', 'icon']);();
-    Get.until((route) => route.settings.name == "/MerchantListScreen");
+    await controller.updateCategory(id: category.id!, fieldsToUpdate: ['name', 'type', 'icon']); // Create category
+    Get.until((route) => route.settings.name == "/CategoryListScreen");
   }
 
   @override
@@ -154,33 +137,23 @@ class EditMerchantScreen extends GetView<MerchantController> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Update Merchant"), centerTitle: true),
+      appBar: AppBar(title: const Text("Update Category"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             GestureDetector(
-              onTap: () => _pickImage(context, textTheme, colorScheme),
+              onTap: () => _pickIcon(context, textTheme, colorScheme),
               child: Obx(() {
-                final file = controller.selectedImage.value;
+                final icon = controller.selectedIcon.value;
 
                 return Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    ClipOval(
-                      child: file != null
-                          ? Image.file(
-                        file,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      )
-                          : Image.asset(
-                        'assets/images/default_merchant.png',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: colorScheme.surfaceContainerLow,
+                      child: Image.asset(icon, width: 60, height: 60),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -189,11 +162,7 @@ class EditMerchantScreen extends GetView<MerchantController> {
                         border: Border.all(color: colorScheme.surface, width: 2),
                       ),
                       padding: const EdgeInsets.all(6),
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 20,
-                      ),
+                      child: const Icon(Icons.edit, color: Colors.white, size: 20),
                     ),
                   ],
                 );
@@ -217,15 +186,16 @@ class EditMerchantScreen extends GetView<MerchantController> {
               selected: {controller.type.value},
               onSelectionChanged: (val) => controller.type.value = val.first,
             )),
+
             const SizedBox(height: 24),
 
-            // 🏷️ Merchant name field
+            // 🏷️ Category name field
             TextFormField(
-              controller: controller.merchantNameController..text = merchant.name,
+              controller: controller.categoryNameController,
               textAlign: TextAlign.start,
               style: textTheme.titleMedium,
               decoration: InputDecoration(
-                labelText: "Merchant Name",
+                labelText: "Category Name",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -249,9 +219,9 @@ class EditMerchantScreen extends GetView<MerchantController> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                onPressed: _updateMerchant,
+                onPressed: _updateCategory,
                 child: Text(
-                  "Update Merchant",
+                  "Update Category",
                   style: textTheme.titleMedium?.copyWith(
                     color: colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,

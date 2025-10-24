@@ -4,11 +4,10 @@ import 'package:money_diary/app/module/label/controller/label_controller.dart';
 import 'package:money_diary/app/utils/utility.dart';
 
 import '../../../custom/widget/validation_message_screen.dart';
-import '../../../data/model/label_model.dart';
 
 class AddLabelScreen extends GetView<LabelController> {
 
-  AddLabelScreen({super.key});
+  const AddLabelScreen({super.key});
 
   Future<void> _pickColor(
       BuildContext context, TextTheme textTheme, ColorScheme colorScheme) async {

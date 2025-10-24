@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:money_diary/app/module/category/controller/category_controller.dart';
 
 import 'add_category_screen.dart';
+import 'category_details_screen.dart';
 
 class CategoryListScreen extends GetView<CategoryController> {
   const CategoryListScreen({super.key});
@@ -155,6 +156,7 @@ class CategoryListScreen extends GetView<CategoryController> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: _buildCategoryItem(
+                    category,
                     category.name,
                     category.type,
                     category.transactionCount,
@@ -175,6 +177,7 @@ class CategoryListScreen extends GetView<CategoryController> {
 
   /// --- Category Item ---
   Widget _buildCategoryItem(
+      dynamic category,
       String name,
       String type,
       int transactionCount,
@@ -197,7 +200,7 @@ class CategoryListScreen extends GetView<CategoryController> {
         onTap: () {
           FocusScope.of(Get.context!).unfocus();
           controller.reset();
-          // Get.to(() => CategoryDetailsScreen());
+          Get.to(() => CategoryDetailsScreen(), arguments: category);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
