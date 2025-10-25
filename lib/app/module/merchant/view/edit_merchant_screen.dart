@@ -176,7 +176,7 @@ class EditMerchantScreen extends GetView<MerchantController> {
                         fit: BoxFit.cover,
                       )
                           : Image.asset(
-                        'assets/images/default_merchant.png',
+                        'assets/icons/default_merchant.png',
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,

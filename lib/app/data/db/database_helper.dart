@@ -25,9 +25,9 @@ class DatabaseHelper {
         await _createLabelTable(db);
         await _createMerchantTable(db);
         await _createCategoryTable(db);
+        await _createAccountTables(db);
       },
-      onUpgrade: (db, oldVersion, newVersion) async {
-      },
+      onUpgrade: (db, oldVersion, newVersion) async {},
     );
   }
 
@@ -72,7 +72,6 @@ class DatabaseHelper {
   }
 
   Future<void> _createCategoryTable(Database db) async {
-
     await db.execute('''
       CREATE TABLE IF NOT EXISTS categories (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,7 +85,6 @@ class DatabaseHelper {
       updated_at TEXT
     )
    ''');
-
 
     await db.execute('''
       INSERT INTO categories (id, name, type, icon, is_active, is_deleted, transaction_count, created_at, updated_at) VALUES
@@ -156,8 +154,64 @@ class DatabaseHelper {
 ''');
   }
 
+  Future<void> _createAccountTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS accounts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL, 
+      name TEXT NOT NULL,
+      account_number TEXT,
+      initial_balance REAL DEFAULT 0,
+      current_balance REAL DEFAULT 0,
+      icon TEXT,
+      include_in_net_worth BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT (datetime('now')),
+      updated_at DATETIME DEFAULT (datetime('now')),
+      is_active BOOLEAN DEFAULT 1,
+      is_deleted INTEGER DEFAULT 0,
+      transaction_count INTEGER DEFAULT 0
+    );
 
-    /// Optional: Close database
+    ''');
+
+    await db.execute('''
+        CREATE TABLE IF NOT EXISTS credit_facility_details (
+        account_id INTEGER PRIMARY KEY,
+        credit_limit REAL,
+        outstanding_balance REAL,
+        billing_date TEXT,          -- optional, null for LoC
+        due_date TEXT,              -- optional, null for LoC
+        interest_rate REAL,         -- optional, for LoC
+        max_utilisation_ratio REAL,
+        alert_enabled BOOLEAN,
+        FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
+      );
+
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS lending_details (
+        account_id INTEGER PRIMARY KEY,
+        contact_name TEXT,
+        contact_number TEXT,
+        contact_email TEXT,
+        FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
+      );
+
+    ''');
+
+    await db.execute('''
+        CREATE TABLE IF NOT EXISTS family_details (
+        account_id INTEGER PRIMARY KEY,
+        member_name TEXT,
+        relation TEXT,
+        FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
+      );
+
+    ''');
+  }
+
+  /// Optional: Close database
   Future close() async {
     final db = await database;
     db.close();

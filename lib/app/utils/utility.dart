@@ -34,5 +34,15 @@ String getDateWithSuffix(int day) {
     default:
       return '${day}th';
   }
+
+}
+
+String formatToDecimal(String value, int decimals) {
+  try {
+    double number = double.parse(value);
+    return number.toStringAsFixed(decimals);
+  } catch (e) {
+    return value; // Return original if parsing fails
+  }
 }
 

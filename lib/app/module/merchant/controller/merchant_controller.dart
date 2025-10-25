@@ -43,7 +43,7 @@ class MerchantController extends GetxController {
 
   Future<void> createMerchant() async {
     String imagePath =
-        selectedImage.value?.path ?? 'assets/images/default_merchant.png';
+        selectedImage.value?.path ?? 'assets/icons/default_merchant.png';
     Merchant? merchant = await merchantService.createMerchant(
       name.value.trim(),
       type.value,
@@ -63,7 +63,7 @@ class MerchantController extends GetxController {
 
     if (merchant != null) {
       String imagePath =
-          selectedImage.value?.path ?? 'assets/images/default_merchant.png';
+          selectedImage.value?.path ?? 'assets/icons/default_merchant.png';
 
       merchant.name = name.value.trim();
       merchant.type = type.value;

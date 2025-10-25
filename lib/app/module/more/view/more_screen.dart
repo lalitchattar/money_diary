@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:money_diary/app/module/account/controller/account_controller.dart';
+import 'package:money_diary/app/module/account/view/account_list_screen.dart';
 import 'package:money_diary/app/module/account/view/account_type_screen.dart';
 import 'package:money_diary/app/module/category/controller/category_controller.dart';
 import 'package:money_diary/app/module/category/view/category_list_screen.dart';
@@ -94,9 +96,9 @@ class MoreScreen extends StatelessWidget {
               subtitle: 'Manage your bank and wallet accounts',
               onTap: () => {
                 Get.to(
-                      () => SelectAccountTypeScreen(),
+                      () => AccountListScreen(),
                   binding: BindingsBuilder(() {
-                    //Get.lazyPut(() => AccountSelectionScreen(), fenix: true);
+                    Get.lazyPut(() => AccountController(), fenix: true);
                   }),
                 ),
               },

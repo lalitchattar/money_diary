@@ -215,7 +215,7 @@ class CategoryListScreen extends GetView<CategoryController> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.asset(
-                        icon ?? 'assets/images/default_merchant.png',
+                        icon ?? 'assets/icons/categories.png',
                         width: 64,
                         height: 64,
                         fit: BoxFit.cover,

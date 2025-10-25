@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:money_diary/app/module/account/controller/bank_account_controller.dart';
+import 'package:money_diary/app/module/general/controller/general_settings_controller.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import '../../../custom/widget/validation_message_screen.dart';
+
 class AddBankAccountScreen extends GetView<BankAccountController> {
   final ImagePicker _picker = ImagePicker();
+
+  final GeneralSettingsController generalSettingsController = Get.find();
 
   AddBankAccountScreen({super.key});
 
@@ -97,6 +102,36 @@ class AddBankAccountScreen extends GetView<BankAccountController> {
       controller.selectedImage.value = savedImage;
     }
   }
+
+  /// 💾 Validate and save merchant
+  Future<void> _saveBankAccount() async {
+    final name = controller.accountNameController.text.trim();
+    final errors = <String>[];
+
+    if (name.isEmpty) {
+      errors.add("Account name is required");
+    } else if (name != controller.accountName.value && await controller.isNameExists(name, 'CASH')) {
+      errors.add("Account name already exists");
+    }
+
+    if (errors.isNotEmpty) {
+      Get.bottomSheet(
+        ValidationMessageScreen(errorMessages: errors),
+        isScrollControlled: true,
+        backgroundColor: Theme.of(Get.context!).colorScheme.surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+      );
+      return;
+    }
+    controller.accountName.value = name;
+    controller.accountNumber.value = controller.accountNumberController.text.trim();
+    controller.initialBalance.value = double.parse(controller.initialBalanceController.text.trim());
+    await controller.createBankAccount();
+    Get.until((route) => route.settings.name == '/AccountListScreen');
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +238,7 @@ class AddBankAccountScreen extends GetView<BankAccountController> {
               style: textTheme.titleMedium,
               decoration: InputDecoration(
                 labelText: "Initial Balance",
-                prefixText: "₹ ",
+                prefixText: '${generalSettingsController.currencySymbol.value} ',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -258,7 +293,9 @@ class AddBankAccountScreen extends GetView<BankAccountController> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                onPressed: () {}, // TODO: implement save
+                onPressed: () {
+                  _saveBankAccount();
+                }, // TODO: implement save
                 child: Text(
                   "Save Account",
                   style: textTheme.titleMedium?.copyWith(

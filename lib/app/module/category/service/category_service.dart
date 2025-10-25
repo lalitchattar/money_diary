@@ -135,7 +135,8 @@ class CategoryService {
     'assets/icons/mortgage.png',
     'assets/icons/debt.png',
     'assets/icons/assets.png',
-    'assets/icons/family.png'
+    'assets/icons/family.png',
+    'assets/icons/default_merchant.png'
   ];
 
   var repo = CategoryRepository();

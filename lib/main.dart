@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'app/module/account/controller/account_controller.dart';
 import 'app/module/general/controller/general_settings_controller.dart';
 import 'app/module/more/view/more_screen.dart';
 import 'app/theme/theme.dart';
-
+import 'app/utils/icon_preloader.dart'; // ⬅️ Import your preloader
 
 Future<void> main() async {
-
-  Get.put(GeneralSettingsController());
   WidgetsFlutterBinding.ensureInitialized();
+  Get.put(GeneralSettingsController());
+  Get.put(AccountController(), permanent: true);
 
   runApp(const MyApp());
 }
@@ -22,12 +23,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  bool _preloaded = false;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _preloadAssets();
+    });
   }
 
+  Future<void> _preloadAssets() async {
+    await IconPreloader.preloadAll(context); // ✅ Preload icons + app directory images
+    setState(() => _preloaded = true);
+  }
 
   @override
   void dispose() {
@@ -39,6 +48,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final textTheme = TextTheme.primaryOf(context);
     final materialTheme = MaterialTheme(textTheme);
+
+    if (!_preloaded) {
+      return const MaterialApp(
+        home: Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
 
     return GetMaterialApp(
       title: 'Money Diary',
