@@ -78,34 +78,4 @@ class AccountController extends GetxController {
     return accountGroups.firstWhereOrNull((g) => g.type == type)?.accounts ??
         [];
   }
-
-  //need to refactor
-
-  // 🔹 Update account
-  Future<void> updateAccount(Account account) async {
-    await accountService.updateAccount(account);
-
-    // Update in memory
-    for (var group in accountGroups) {
-      final index = group.accounts.indexWhere((a) => a.id == account.id);
-      if (index >= 0) {
-        group.accounts[index] = account;
-        accountGroups.refresh();
-        break;
-      }
-    }
-    applyFilter();
-  }
-
-  // 🔹 Soft delete account
-  Future<void> deleteAccount(Account account) async {
-    if (account.id == null) return;
-    await accountService.deleteAccount(account.id!);
-
-    for (var group in accountGroups) {
-      group.accounts.removeWhere((a) => a.id == account.id);
-    }
-    accountGroups.removeWhere((g) => g.accounts.isEmpty);
-    applyFilter();
-  }
 }

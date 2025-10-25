@@ -24,23 +24,9 @@ class AccountService {
     return grouped.entries.map((e) => AccountGroup(type: e.key, accounts: e.value)).toList();
   }
 
-  Future<Account> addAccount(Account account) async {
-    final id = await repo.insert(account.toMap());
-    return account.copyWith(id: id);
+  Future<bool> isNameExists(String accountName, String accountType) async {
+    final merchant = await repo.getAccountByName(accountName.trim(), accountType);
+    return merchant != null;
   }
 
-  Future<void> updateAccount(Account account) async {
-    if (account.id != null) {
-      await repo.update(account.id!, account.toMap());
-    }
-  }
-
-  Future<void> deleteAccount(int id) async {
-    await repo.softDelete(id);
-  }
-
-  Future<List<Account>> getAccountsByType(String type) async {
-    final rows = await repo.getByType(type);
-    return rows.map((row) => Account.fromJson(row)).toList();
-  }
 }

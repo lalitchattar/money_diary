@@ -3,19 +3,18 @@ import 'package:money_diary/app/data/repository/account_repository.dart';
 
 import '../../../utils/app_logger.dart';
 
-class BankAccountService {
+class CashAccountService {
 
   final repo = AccountRepository();
 
   Future<Account?> createAccount(
     String name,
-    String accountNumber,
     double initialBalance,
     bool includeInNetWorth,
     String type,
     String icon,
   ) async {
-    var account = Account(name: name, accountNumber: accountNumber, initialBalance: initialBalance, currentBalance: initialBalance, type: type, icon: icon, includeInNetWorth: includeInNetWorth);
+    var account = Account(name: name, initialBalance: initialBalance, currentBalance: initialBalance, type: type, icon: icon, includeInNetWorth: includeInNetWorth);
     try {
       return await repo.createAccount(account);
     } catch (e, stack) {
@@ -24,9 +23,4 @@ class BankAccountService {
     }
   }
 
-
-  Future<bool> isNameExists(String accountName, String accountType) async {
-    final merchant = await repo.getAccountByName(accountName.trim(), accountType);
-    return merchant != null;
-  }
 }

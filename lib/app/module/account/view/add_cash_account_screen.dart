@@ -7,6 +7,8 @@ import 'package:money_diary/app/module/account/controller/cash_account_controlle
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import '../../../custom/widget/validation_message_screen.dart';
+
 class AddCashAccountScreen extends GetView<CashAccountController> {
   final ImagePicker _picker = ImagePicker();
 
@@ -97,6 +99,34 @@ class AddCashAccountScreen extends GetView<CashAccountController> {
 
       controller.selectedImage.value = savedImage;
     }
+  }
+
+  /// 💾 Validate and save merchant
+  Future<void> _saveCashAccount() async {
+    final name = controller.accountNameController.text.trim();
+    final errors = <String>[];
+
+    if (name.isEmpty) {
+      errors.add("Account name is required");
+    } else if (await controller.isNameExists(name, 'CASH')) {
+      errors.add("Account name already exists");
+    }
+
+    if (errors.isNotEmpty) {
+      Get.bottomSheet(
+        ValidationMessageScreen(errorMessages: errors),
+        isScrollControlled: true,
+        backgroundColor: Theme.of(Get.context!).colorScheme.surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+      );
+      return;
+    }
+    controller.accountName.value = name;
+    controller.initialBalance.value = double.parse(controller.initialBalanceController.text.trim());
+    await controller.createCashAccount();
+    Get.until((route) => route.settings.name == '/AccountListScreen');
   }
 
   @override
@@ -237,7 +267,9 @@ class AddCashAccountScreen extends GetView<CashAccountController> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                onPressed: () {}, // TODO: implement save
+                onPressed: () {
+                  _saveCashAccount();
+                }, // TODO: implement save
                 child: Text(
                   "Save Account",
                   style: textTheme.titleMedium?.copyWith(

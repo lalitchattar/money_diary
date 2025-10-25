@@ -74,6 +74,12 @@ class SelectAccountTypeScreen extends StatelessWidget {
                     );
                   }),
                   //_buildAccountCard(context, 'assets/icons/saving.png', 'Savings', () => {}),
+                ],
+              ),
+              _buildCategory(
+                context,
+                'Lending',
+                [
                   _buildAccountCard(context, 'assets/icons/borrow.png', 'Lending', () {
                     Get.to(
                           () => AddLendingAccountScreen(),
@@ -82,6 +88,13 @@ class SelectAccountTypeScreen extends StatelessWidget {
                       }),
                     );
                   }),
+                ],
+              ),
+
+              _buildCategory(
+                context,
+                'Family',
+                [
                   _buildAccountCard(context, 'assets/icons/family.png', 'Family Member', () {
                     Get.to(
                           () => AddFamilyMemberAccountScreen(),

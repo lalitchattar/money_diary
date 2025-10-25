@@ -181,14 +181,14 @@ class Account {
   // 🔹 Lending
   // -------------------------
   Map<String, dynamic> toLendingMap() {
-    final map = toMap();
-    map.addAll({
+    return {
+      'account_id': id,
       'contact_name': contactName,
       'contact_number': contactNumber,
       'contact_email': contactEmail,
-    });
-    return map;
+    };
   }
+
 
   factory Account.fromLendingJson(Map<String, dynamic> json) {
     final acc = Account.fromJson(json);

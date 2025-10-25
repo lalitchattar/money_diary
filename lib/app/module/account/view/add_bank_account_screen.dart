@@ -110,7 +110,7 @@ class AddBankAccountScreen extends GetView<BankAccountController> {
 
     if (name.isEmpty) {
       errors.add("Account name is required");
-    } else if (name != controller.accountName.value && await controller.isNameExists(name, 'CASH')) {
+    } else if (await controller.isNameExists(name, 'CASH')) {
       errors.add("Account name already exists");
     }
 

@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:money_diary/app/data/model/account_model.dart';
-import 'package:money_diary/app/module/account/service/bank_account_servie.dart';
+import 'package:money_diary/app/module/account/service/account_service.dart';
 
+import '../service/bank_account_service.dart';
 import 'account_controller.dart';
 
 class BankAccountController extends GetxController {
@@ -23,6 +24,7 @@ class BankAccountController extends GetxController {
   final AccountController accountController = Get.find();
 
   var bankAccountService = BankAccountService();
+  var accountService = AccountService();
 
   BankAccountController({BankAccountService? service})
       : bankAccountService = service ?? BankAccountService();
@@ -56,7 +58,7 @@ class BankAccountController extends GetxController {
   }
 
   Future<bool> isNameExists(String accountName, String accountType) async {
-    return bankAccountService.isNameExists(accountName, accountType);
+    return accountService.isNameExists(accountName, accountType);
   }
 
 }

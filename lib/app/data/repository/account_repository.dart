@@ -12,18 +12,27 @@ class AccountRepository {
   }
 
   Future<Account> createAccount(Account account) async {
-    try {
-      final db = await dbHelper.database;
-      final id = await db.insert('accounts', account.toMap());
-      return account.copyWith(id: id);
-    } catch (e, stack) {
-      appLogger.e(
-        'Error creating account: ${account.name}',
-        error: e,
-        stackTrace: stack,
-      );
-      rethrow;
-    }
+    final db = await dbHelper.database;
+    
+    return db.transaction<Account>((txn) async {
+      try {
+        final id = await txn.insert('accounts', account.toMap());
+        final newAccount = account.copyWith(id: id);
+
+        if (newAccount.type.toUpperCase() == 'LENDING') {
+          await txn.insert('lending_details', newAccount.toLendingMap());
+        }
+        return newAccount;
+      } catch (e, stack) {
+        appLogger.e(
+          'Error creating account: ${account.name}',
+          error: e,
+          stackTrace: stack,
+        );
+        rethrow;
+      }
+    });
+
   }
 
   Future<Account?> getAccountByName(String name, String accountType) async {
@@ -56,38 +65,18 @@ class AccountRepository {
     }
   }
 
-  Future<int> insert(Map<String, dynamic> data) async {
-    final db = await dbHelper.database;
-    return db.insert('accounts', data);
-  }
-
-  Future<int> update(int id, Map<String, dynamic> data) async {
-    final db = await dbHelper.database;
-    return db.update('accounts', data, where: 'id = ?', whereArgs: [id]);
-  }
-
-  Future<int> softDelete(int id) async {
-    final db = await dbHelper.database;
-    return db.update(
-      'accounts',
-      {'is_deleted': 1},
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<List<Map<String, dynamic>>> getAll() async {
-    final db = await dbHelper.database;
-    return db.query('accounts', where: 'is_deleted = ?', whereArgs: [0]);
-  }
-
-  Future<List<Map<String, dynamic>>> getByType(String type) async {
-    final db = await dbHelper.database;
-    return db.query(
-      'accounts',
-      where: 'type = ? AND is_deleted = ?',
-      whereArgs: [type, 0],
-    );
+  Future<void> saveLendingAccountDetails(Account account) async {
+    try {
+      final db = await dbHelper.database;
+      await db.insert('lending_details', account.toLendingMap());
+    } catch (e, stack) {
+      appLogger.e(
+        'Error creating account: ${account.name}',
+        error: e,
+        stackTrace: stack,
+      );
+      rethrow;
+    }
   }
 
   Future<void> dispose() async {
